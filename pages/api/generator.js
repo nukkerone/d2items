@@ -33,6 +33,7 @@ const get = async (req, res) => {
     } else {
       elementRef = weaponRef;
       proccessedUniqueItem = processAsWeapon({ ...uniqueItem, ...{ elementRef } });
+      /* proccessedUniqueItem = { ...uniqueItem, ...{ elementRef } }; */
     }
 
     return proccessedUniqueItem;
