@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import Link from 'next/link';
 
-export default function Dashboard({ properties }) {
+export default function Properties({ properties }) {
   return (
     <div className="container">
       <Head>
@@ -33,7 +33,7 @@ export default function Dashboard({ properties }) {
             {
               properties.map(property =>
                 <tr key={property._id}>
-                  <td>{ property.code }</td>
+                  <td>{property.code}</td>
                   <td>{property['*desc'] ?? '-'}</td>
                   <td>{property['*param'] ?? '-'}</td>
                   <td>{property['*min'] ?? '-'}</td>
@@ -41,12 +41,12 @@ export default function Dashboard({ properties }) {
                   <td>{property['*notes'] ?? '-'}</td>
                   <td>{property.readable ?? '-'}</td>
                   <td>
-                    <Link className="btn btn-primary" href={`/dashboard/properties/${property._id}`}>edit readable</Link>
+                    <Link className="btn btn-primary" href={`/dashboard/property/${property._id}`}>edit readable</Link>
                   </td>
                 </tr>
               )
             }
-            
+
           </tbody>
         </table>
       </div>

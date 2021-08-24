@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import Link from 'next/link';
 
-export default function Dashboard({ properties }) {
+export default function Uniques({ uniqueitems }) {
   return (
     <div className="container">
       <Head>
@@ -13,7 +13,7 @@ export default function Dashboard({ properties }) {
 
       <div className="container">
         <h1 className="title mt-5 mb-5">
-          Manage properties
+          Manage unique items
         </h1>
 
         <table className="table table-striped">
@@ -31,9 +31,9 @@ export default function Dashboard({ properties }) {
           </thead>
           <tbody>
             {
-              properties.map(property =>
+              uniqueitems.map(property =>
                 <tr key={property._id}>
-                  <td>{ property.code }</td>
+                  <td>{property.code}</td>
                   <td>{property['*desc'] ?? '-'}</td>
                   <td>{property['*param'] ?? '-'}</td>
                   <td>{property['*min'] ?? '-'}</td>
@@ -41,12 +41,12 @@ export default function Dashboard({ properties }) {
                   <td>{property['*notes'] ?? '-'}</td>
                   <td>{property.readable ?? '-'}</td>
                   <td>
-                    <Link className="btn btn-primary" href={`/dashboard/properties/${property._id}`}>edit readable</Link>
+                    <Link className="btn btn-primary" href={`/dashboard/property/${property._id}`}>edit readable</Link>
                   </td>
                 </tr>
               )
             }
-            
+
           </tbody>
         </table>
       </div>
@@ -201,9 +201,9 @@ export default function Dashboard({ properties }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const properties = await db.collection('properties').find({}).limit(200).toArray();
+  const uniqueitems = await db.collection('uniqueitems').find({}).limit(200).toArray();
 
   return {
-    props: { properties: JSON.parse(JSON.stringify(properties)) },
+    props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },
   }
 }

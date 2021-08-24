@@ -2,53 +2,54 @@ import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import Link from 'next/link';
 
-export default function Dashboard({ properties }) {
+export default function Uniques({ uniqueitems }) {
   return (
     <div className="container">
       <Head>
-        <title>Dashboard</title>
+        <title>Unique items</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <div className="container">
         <h1 className="title mt-5 mb-5">
-          Manage properties
+          Unique Items
         </h1>
 
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Property</th>
-              <th scope="col">Desc</th>
-              <th scope="col">Param</th>
-              <th scope="col">Min</th>
-              <th scope="col">Max</th>
-              <th scope="col">Notes</th>
-              <th scope="col">Readable</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              properties.map(property =>
-                <tr key={property._id}>
-                  <td>{ property.code }</td>
-                  <td>{property['*desc'] ?? '-'}</td>
-                  <td>{property['*param'] ?? '-'}</td>
-                  <td>{property['*min'] ?? '-'}</td>
-                  <td>{property['*max'] ?? '-'}</td>
-                  <td>{property['*notes'] ?? '-'}</td>
-                  <td>{property.readable ?? '-'}</td>
-                  <td>
-                    <Link className="btn btn-primary" href={`/dashboard/properties/${property._id}`}>edit readable</Link>
-                  </td>
-                </tr>
-              )
-            }
-            
-          </tbody>
-        </table>
+        {
+          uniqueitems.map(item =>
+            <div className="card" key={item._id}>
+              <h2>{item.index}</h2>
+              <h3>{item.tierName} Unique</h3>
+              <h4>{item['*type']}</h4>
+              
+              {item['is2handed'] ?
+                <>
+                  <p>2H damage: {item['2handmindam'] + '-' + item['2handmaxdam']}</p>
+                </>
+                :
+                <>
+                  <p>1H damage: {item.mindam + '-' + item.maxdam}</p>
+                </>
+              }
+              <p>Base Speed: {item.speed}</p>
+              <p>Durability: {item.durability}</p>
+              <p>Req level: {item['lvl req']}</p>
+
+              {
+                Object.entries(item).map(([key, val]) => {
+                  console.log('Prop ', key, val);
+                  const match = key.match(/(prop)[0-9]+/g);
+                  if (match && match.length > 0) {
+                    return <p className="property">{val}</p>
+                  }
+                })
+              }
+
+            </div>
+          )
+        }
+
       </div>
 
       <footer>
@@ -201,9 +202,9 @@ export default function Dashboard({ properties }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const properties = await db.collection('properties').find({}).limit(200).toArray();
+  const uniqueitems = await db.collection('generated').find({}).limit(500).toArray();
 
   return {
-    props: { properties: JSON.parse(JSON.stringify(properties)) },
+    props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },
   }
 }
