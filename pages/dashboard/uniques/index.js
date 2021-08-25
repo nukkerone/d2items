@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { connectToDatabase } from '../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/mongodb';
 import Link from 'next/link';
 
 export default function Uniques({ uniqueitems }) {
