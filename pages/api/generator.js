@@ -9,7 +9,7 @@ export default async (req, res) => {
 
 const get = async (req, res) => {
   const { db } = await connectToDatabase();
-  const uniqueItems = await db.collection('uniqueitems').find({}).limit(3).toArray();
+  const uniqueItems = await db.collection('uniqueitems').find({}).limit(10).toArray();
   let items = [];
   const propertiesWithReadable = await db.collection('properties').find({ readable: { $exists: true } }).toArray();
 
@@ -38,8 +38,10 @@ const get = async (req, res) => {
     }
 
     return proccessedUniqueItem;
-    
+
   }));
+
+  items = items.filter(i => !!i);
 
   db.collection('generated').drop();
   db.collection('generated').insertMany(items);
@@ -48,6 +50,9 @@ const get = async (req, res) => {
 }
 
 const processAsWeapon = (uniqueWeaponItem, propertiesWithReadable) => {
+  if (!uniqueWeaponItem) {
+    return null;
+  }
   let proccessed = {
     _id: uniqueWeaponItem._id,
     baseElement: 'weapon',

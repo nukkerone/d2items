@@ -1,8 +1,41 @@
+import { useEffect, useMemo, useState } from 'react';
+import { debounce } from 'lodash';
 import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
-import Link from 'next/link';
+import MiniSearch from 'minisearch';
 
 export default function Uniques({ uniqueitems }) {
+  let miniSearch;
+
+  const [items, setItems] = useState(uniqueitems)
+
+  useEffect(() => {
+    miniSearch = new MiniSearch({
+      idField: '_id',
+      fields: ['index', '*type', 'tierName', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12'], // fields to index for full-text search
+      storeFields: ['index', '*type'], // fields to return with search results
+      searchOptions: {
+        prefix: true,
+      }
+    });
+
+    miniSearch.addAll(uniqueitems);
+  }, []);
+
+  const searchHandler = (e) => {
+    if (e.target.value) {
+      const results = miniSearch.search(e.target.value).map(i => i.id);
+      const items = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
+      setItems(items);
+    } else {
+      setItems(uniqueitems);
+    }
+  };
+
+  const debouncedSearchHandler = useMemo(
+    () => debounce(searchHandler, 300)
+    , []);
+  
   return (
     <div className="container">
       <Head>
@@ -16,39 +49,51 @@ export default function Uniques({ uniqueitems }) {
           Unique Items
         </h1>
 
-        {
-          uniqueitems.map(item =>
-            <div className="card" key={item._id}>
-              <h2>{item.index}</h2>
-              <h3>{item.tierName} Unique</h3>
-              <h4>{item['*type']}</h4>
-              
-              {item['is2handed'] ?
-                <>
-                  <p>2H damage: {item['2handmindam'] + '-' + item['2handmaxdam']}</p>
-                </>
-                :
-                <>
-                  <p>1H damage: {item.mindam + '-' + item.maxdam}</p>
-                </>
-              }
-              <p>Base Speed: {item.speed}</p>
-              <p>Durability: {item.durability}</p>
-              <p>Req level: {item['lvl req']}</p>
-
-              {
-                Object.entries(item).map(([key, val]) => {
-                  console.log('Prop ', key, val);
-                  const match = key.match(/(prop)[0-9]+/g);
-                  if (match && match.length > 0) {
-                    return <p className="property">{val}</p>
-                  }
-                })
-              }
-
+        <div className="row">
+          <form className="col-lg-12">
+            <div className="mb-3">
+              <label htmlFor="search" className="form-label">Search for items</label>
+              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler}/>
             </div>
-          )
-        }
+          </form>
+        </div>
+
+        <div className="row">
+          {
+            items.map(item =>
+              <div key={item._id} className="col-lg-4">
+                <div className="card">
+                  <h2>{item.index}</h2>
+                  <h3>{item.tierName} Unique</h3>
+                  <h4>{item['*type']}</h4>
+
+                  {item['is2handed'] ?
+                    <>
+                      <p>2H damage: {item['2handmindam'] + '-' + item['2handmaxdam']}</p>
+                    </>
+                    :
+                    <>
+                      <p>1H damage: {item.mindam + '-' + item.maxdam}</p>
+                    </>
+                  }
+                  <p>Base Speed: {item.speed}</p>
+                  <p>Durability: {item.durability}</p>
+                  <p>Req level: {item['lvl req']}</p>
+
+                  {
+                    Object.entries(item).map(([key, val], i) => {
+                      const match = key.match(/(prop)[0-9]+/g);
+                      if (match && match.length > 0) {
+                        return <p className="property" key={i}>{val}</p>
+                      }
+                    })
+                  }
+
+                </div>
+              </div>
+            )
+          }
+        </div>
 
       </div>
 

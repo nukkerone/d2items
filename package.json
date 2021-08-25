@@ -8,6 +8,8 @@
   "dependencies": {
     "@popperjs/core": "^2.9.3",
     "bootstrap": "^5.0.0-beta3",
+    "lodash": "^4.17.21",
+    "minisearch": "^3.0.4",
     "mongodb": "^3.5.9",
     "next": "latest",
     "react": "^17.0.2",
