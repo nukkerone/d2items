@@ -9,7 +9,7 @@ export default async (req, res) => {
 
 const get = async (req, res) => {
   const { db } = await connectToDatabase();
-  const uniqueItems = await db.collection('uniqueitems').find({}).limit(10).toArray();
+  const uniqueItems = await db.collection('uniqueitems').find({}).limit(500).toArray();
   let items = [];
   const propertiesWithReadable = await db.collection('properties').find({ readable: { $exists: true } }).toArray();
 
@@ -72,11 +72,11 @@ const processAsWeapon = (uniqueWeaponItem, propertiesWithReadable) => {
   proccessed.maxdam = uniqueWeaponItem.elementRef.maxdam;
   proccessed.avgdam = (uniqueWeaponItem.elementRef.mindam + uniqueWeaponItem.elementRef.maxdam) / 2 || 0;
   proccessed.dps = uniqueWeaponItem.elementRef.avgdam * (100 - uniqueWeaponItem.elementRef.speed) / 100 || 0;
-  proccessed['is2handed'] = proccessed['2handmindam'] > 0;
   proccessed['2handmindam'] = uniqueWeaponItem.elementRef['2handmindam'];
   proccessed['2handmaxdam'] = uniqueWeaponItem.elementRef['2handmaxdam'];
   proccessed['2handavgdam'] = (uniqueWeaponItem.elementRef['2handmindam'] + uniqueWeaponItem.elementRef['2handmaxdam']) / 2 || 0;
   proccessed['2handdps'] = uniqueWeaponItem.elementRef['2handavgdam'] * (100 - uniqueWeaponItem.elementRef.speed) / 100 || 0;
+  proccessed['is2handed'] = proccessed['2handmindam'] > 0;
   proccessed.avgmisdam = (uniqueWeaponItem.elementRef.minmisdam + uniqueWeaponItem.elementRef.maxmisdam) / 2 || 0;
   proccessed.misdps = uniqueWeaponItem.elementRef.avgmisdam * (100 - uniqueWeaponItem.elementRef.speed) / 100 || 0;
   /* proccessed.levelreq = uniqueWeaponItem.elementRef.levelreq || 0; */

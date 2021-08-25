@@ -80,6 +80,8 @@ export default function Uniques({ uniqueitems }) {
                   <p>Durability: {item.durability}</p>
                   <p>Req level: {item['lvl req']}</p>
 
+                  <br />
+
                   {
                     Object.entries(item).map(([key, val], i) => {
                       const match = key.match(/(prop)[0-9]+/g);
