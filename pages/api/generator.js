@@ -1,15 +1,18 @@
 import { connectToDatabase } from '../../lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 export default async (req, res) => {
   switch (req.method) {
     case 'GET':
       return await get(req, res);
+    case 'POST':
+      return await post(req, res);
   }
 }
 
 const get = async (req, res) => {
   const { db } = await connectToDatabase();
-  const uniqueItems = await db.collection('uniqueitems').find({}).limit(500).toArray();
+  const uniqueItems = await db.collection('uniqueitems').find({}).limit(20).toArray();
   let items = [];
   const propertiesWithReadable = await db.collection('properties').find({ readable: { $exists: true } }).toArray();
 
@@ -33,9 +36,12 @@ const get = async (req, res) => {
       }
     } else {
       elementRef = weaponRef;
-      proccessedUniqueItem = processAsWeapon({ ...uniqueItem, ...{ elementRef } }, propertiesWithReadable);
+      proccessedUniqueItem = processAsWeapon({ ...uniqueItem, ...{ elementRef } });
       /* proccessedUniqueItem = { ...uniqueItem, ...{ elementRef } }; */
     }
+
+    const { propsAsArray, readableProperties } = processProperties(uniqueItem, propertiesWithReadable);
+    proccessedUniqueItem = { ...proccessedUniqueItem, ...{ propsAsArray }, ...readableProperties };
 
     return proccessedUniqueItem;
 
@@ -49,7 +55,25 @@ const get = async (req, res) => {
   res.json(items);
 }
 
-const processAsWeapon = (uniqueWeaponItem, propertiesWithReadable) => {
+const getWeaponRef = async (uniqueItem) => {
+  const { db } = await connectToDatabase();
+  const weaponRef = await db.collection('weapons').findOne({ code: uniqueItem.code });
+  return weaponRef;
+}
+
+const getArmorRef = async (uniqueItem) => {
+  const { db } = await connectToDatabase();
+  const armorRef = await db.collection('armors').findOne({ code: uniqueItem.code });
+  return armorRef;
+}
+
+const getMiscRef = async (uniqueItem) => {
+  const { db } = await connectToDatabase();
+  const miscRef = await db.collection('misc').findOne({ code: uniqueItem.code });
+  return miscRef;
+}
+
+const processAsWeapon = (uniqueWeaponItem) => {
   if (!uniqueWeaponItem) {
     return null;
   }
@@ -62,10 +86,6 @@ const processAsWeapon = (uniqueWeaponItem, propertiesWithReadable) => {
     '*type': uniqueWeaponItem['*type'],
     durability: uniqueWeaponItem.elementRef.durability,
   };
-
-  const readableProperties = getReadableProperties(uniqueWeaponItem, propertiesWithReadable);
-  proccessed = { ...proccessed, ...readableProperties };
-  /* console.log('readableProperties ', readableProperties); */
   
   proccessed.speed = uniqueWeaponItem.elementRef.speed || 0;
   proccessed.mindam = uniqueWeaponItem.elementRef.mindam;
@@ -86,8 +106,9 @@ const processAsWeapon = (uniqueWeaponItem, propertiesWithReadable) => {
   return proccessed;
 }
 
-const getReadableProperties = (uniqueItem, propertiesWithReadable) => {
-  const result = {};
+const processProperties = (uniqueItem, propertiesWithReadable) => {
+  const propsAsArray = [];
+  const readableProperties = {};
   const propRegex = /(prop)[0-9]+/g;
 
   for (const prop in uniqueItem) {
@@ -103,11 +124,15 @@ const getReadableProperties = (uniqueItem, propertiesWithReadable) => {
         readableProperty = readableProperty.replace(/<\*max>+/g, uniqueItem['max'+propNumber]);
         readableProperty = readableProperty.replace(/<\*param>+/g, uniqueItem['par'+propNumber]);
       }
-      result[prop] = readableProperty ?? 'unset - ' + propValue;
+      propsAsArray.push(propValue);
+      readableProperties[prop] = readableProperty ?? 'unset - ' + propValue;
     }
   }
 
-  return result;
+  return {
+    propsAsArray,
+    readableProperties
+  };
 }
 
 const processAsArmor = (uniqueArmorItem) => {
@@ -116,4 +141,48 @@ const processAsArmor = (uniqueArmorItem) => {
 
 const processAsMisc = (uniqueMiscItem) => {
   return uniqueMiscItem;
+}
+
+const post = async (req, res) => {
+  const { db } = await connectToDatabase();
+  const ids = req.body.id ? [req.body.id] : [...req.body.ids];
+  // These are all the readable properties, I cache this since I use it in several places
+  const propertiesWithReadable = await db.collection('properties').find({ readable: { $exists: true } }).toArray();
+
+  // For all the generated items I need to update
+  const toWait = await Promise.all(ids.map(async(id) => {
+    const generatedItem = await generateSingleItem(id, propertiesWithReadable);
+    await db.collection('generated').replaceOne({ _id: ObjectId(id) }, generatedItem, { upsert: true });
+
+    return id;
+  }));
+
+  res.send(true);
+
+}
+
+const generateSingleItem = async (id, propertiesWithReadable) => {
+  const { db } = await connectToDatabase();
+  const uniqueItem = await db.collection('uniqueitems').findOne({ _id: ObjectId(id) });
+  let generatedItem = await db.collection('generated').findOne({ _id: ObjectId(id) });
+  const { propsAsArray, readableProperties } = processProperties(uniqueItem, propertiesWithReadable);
+
+  if (!generatedItem) {
+    const weaponRef = await getWeaponRef(uniqueItem);
+    if (weaponRef) {
+      generatedItem = processAsWeapon({ ...uniqueItem, ...{ elementRef: weaponRef } });
+    } else {
+      const armorRef = await getArmorRef(uniqueItem);
+      if (armorRef) {
+        generatedItem = processAsArmor({ ...uniqueItem, ...{ elementRef: armorRef } });
+      } else {
+        const miscRef = await getMiscRef(uniqueItem);
+        generatedItem = processAsArmor({ ...uniqueItem, ...{ elementRef: miscRef } });
+      }
+    }
+  }
+
+  generatedItem = { ...generatedItem, ...{ propsAsArray }, ...readableProperties };
+
+  return generatedItem;
 }
