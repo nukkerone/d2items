@@ -12,7 +12,7 @@ export default async (req, res) => {
 
 const get = async (req, res) => {
   const { db } = await connectToDatabase();
-  const uniqueItems = await db.collection('uniqueitems').find({}).limit(20).toArray();
+  const uniqueItems = await db.collection('uniqueitems').find({}).limit(400).toArray();
   let items = [];
   const propertiesWithReadable = await db.collection('properties').find({ readable: { $exists: true } }).toArray();
 
@@ -85,6 +85,7 @@ const processAsWeapon = (uniqueWeaponItem) => {
     'lvl req': uniqueWeaponItem['lvl req'],
     '*type': uniqueWeaponItem['*type'],
     durability: uniqueWeaponItem.elementRef.durability,
+    reqstr: uniqueWeaponItem.elementRef.reqstr,
   };
   
   proccessed.speed = uniqueWeaponItem.elementRef.speed || 0;
@@ -136,7 +137,23 @@ const processProperties = (uniqueItem, propertiesWithReadable) => {
 }
 
 const processAsArmor = (uniqueArmorItem) => {
-  return uniqueArmorItem;
+
+  let proccessed = {
+    _id: uniqueArmorItem._id,
+    baseElement: 'armor',
+    index: uniqueArmorItem.index,
+    lvl: uniqueArmorItem.lvl,
+    'lvl req': uniqueArmorItem['lvl req'],
+    '*type': uniqueArmorItem['*type'],
+    durability: uniqueArmorItem.elementRef.durability,
+    weightClass: uniqueArmorItem.speed === 10 ? 'Heavy' : uniqueArmorItem.speed === 5 ? 'Medium' : 'Light',
+    reqstr: uniqueWeaponItem.elementRef.reqstr,
+  };
+
+  proccessed.tier = uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ultracode ? 3 : uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ubercode ? 2 : 1;
+  proccessed.tierName = ['None', 'Normal', 'Exceptional', 'Elite'][proccessed.tier];
+
+  return proccessed;
 }
 
 const processAsMisc = (uniqueMiscItem) => {

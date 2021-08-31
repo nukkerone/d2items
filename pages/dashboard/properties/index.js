@@ -41,7 +41,7 @@ export default function Properties({ properties }) {
                   <td>{property['*notes'] ?? '-'}</td>
                   <td>{property.readable ?? '-'}</td>
                   <td>
-                    <Link className="btn btn-primary" href={`/dashboard/property/${property._id}`}>edit readable</Link>
+                    <Link className="btn btn-primary" href={`/dashboard/properties/${property._id}`}>edit readable</Link>
                   </td>
                 </tr>
               )

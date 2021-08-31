@@ -19,29 +19,23 @@ export default function Uniques({ uniqueitems }) {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">Property</th>
-              <th scope="col">Desc</th>
-              <th scope="col">Param</th>
-              <th scope="col">Min</th>
-              <th scope="col">Max</th>
-              <th scope="col">Notes</th>
-              <th scope="col">Readable</th>
+              <th scope="col">Index</th>
+              <th scope="col">Base Element</th>
+              <th scope="col">Type</th>
+              <th scope="col">Tier</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
             {
-              uniqueitems.map(property =>
-                <tr key={property._id}>
-                  <td>{property.code}</td>
-                  <td>{property['*desc'] ?? '-'}</td>
-                  <td>{property['*param'] ?? '-'}</td>
-                  <td>{property['*min'] ?? '-'}</td>
-                  <td>{property['*max'] ?? '-'}</td>
-                  <td>{property['*notes'] ?? '-'}</td>
-                  <td>{property.readable ?? '-'}</td>
+              uniqueitems.map(unique =>
+                <tr key={unique._id}>
+                  <td>{unique.index}</td>
+                  <td>{unique.baseElement}</td>
+                  <td>{unique['*type']}</td>
+                  <td>{unique.tierName}</td>
                   <td>
-                    <Link className="btn btn-primary" href={`/dashboard/property/${property._id}`}>edit readable</Link>
+                    <Link className="btn btn-primary" href={`/dashboard/uniques/${unique._id}`}>edit unique</Link>
                   </td>
                 </tr>
               )
@@ -201,7 +195,7 @@ export default function Uniques({ uniqueitems }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const uniqueitems = await db.collection('uniqueitems').find({}).limit(200).toArray();
+  const uniqueitems = await db.collection('generated').find({}).limit(200).toArray();
 
   return {
     props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },
