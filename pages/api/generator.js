@@ -102,7 +102,7 @@ const processAsWeapon = (uniqueWeaponItem) => {
   proccessed.misdps = uniqueWeaponItem.elementRef.avgmisdam * (100 - uniqueWeaponItem.elementRef.speed) / 100 || 0;
   /* proccessed.levelreq = uniqueWeaponItem.elementRef.levelreq || 0; */
   proccessed.tier = uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ultracode ? 3 : uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ubercode ? 2 : 1;
-  proccessed.tierName = ['None', 'Normal', 'Exceptional', 'Elite'][proccessed.tier];
+  proccessed.tierName = ['None', 'Normal Unique', 'Exceptional Unique', 'Elite Unique'][proccessed.tier];
 
   return proccessed;
 }
@@ -147,11 +147,11 @@ const processAsArmor = (uniqueArmorItem) => {
     '*type': uniqueArmorItem['*type'],
     durability: uniqueArmorItem.elementRef.durability,
     weightClass: uniqueArmorItem.speed === 10 ? 'Heavy' : uniqueArmorItem.speed === 5 ? 'Medium' : 'Light',
-    reqstr: uniqueWeaponItem.elementRef.reqstr,
+    reqstr: uniqueArmorItem.elementRef.reqstr,
   };
 
-  proccessed.tier = uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ultracode ? 3 : uniqueWeaponItem.elementRef.code === uniqueWeaponItem.elementRef.ubercode ? 2 : 1;
-  proccessed.tierName = ['None', 'Normal', 'Exceptional', 'Elite'][proccessed.tier];
+  proccessed.tier = uniqueArmorItem.elementRef.code === uniqueArmorItem.elementRef.ultracode ? 3 : uniqueArmorItem.elementRef.code === uniqueArmorItem.elementRef.ubercode ? 2 : 1;
+  proccessed.tierName = ['None', 'Normal Unique', 'Exceptional Unique', 'Elite Unique'][proccessed.tier];
 
   return proccessed;
 }
