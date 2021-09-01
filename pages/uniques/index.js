@@ -13,7 +13,7 @@ export default function Uniques({ uniqueitems }) {
     miniSearch = new MiniSearch({
       idField: '_id',
       fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
-      storeFields: ['index', '*type'], // fields to return with search results
+      storeFields: ['name', 'base'], // fields to return with search results
       searchOptions: {
         prefix: true,
       }

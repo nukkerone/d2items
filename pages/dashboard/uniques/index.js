@@ -19,9 +19,8 @@ export default function Uniques({ uniqueitems }) {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">Index</th>
+              <th scope="col">Name</th>
               <th scope="col">Base Element</th>
-              <th scope="col">Type</th>
               <th scope="col">Tier</th>
               <th scope="col">Actions</th>
             </tr>
@@ -30,10 +29,9 @@ export default function Uniques({ uniqueitems }) {
             {
               uniqueitems.map(unique =>
                 <tr key={unique._id}>
-                  <td>{unique.index}</td>
-                  <td>{unique.baseElement}</td>
-                  <td>{unique['*type']}</td>
-                  <td>{unique.tierName}</td>
+                  <td>{unique.name}</td>
+                  <td>{unique.base}</td>
+                  <td>{unique.tier}</td>
                   <td>
                     <Link className="btn btn-primary" href={`/dashboard/uniques/${unique._id}`}>edit unique</Link>
                   </td>
@@ -195,7 +193,7 @@ export default function Uniques({ uniqueitems }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const uniqueitems = await db.collection('generated').find({}).limit(200).toArray();
+  const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(400).toArray();
 
   return {
     props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },

@@ -163,7 +163,7 @@ export async function getServerSideProps(context) {
   let unique = null;
 
   if (query.uid) {
-    unique = await db.collection('generated').findOne({ _id: new ObjectId(query.uid) });
+    unique = await db.collection('unique_scrapped_normalized').findOne({ _id: new ObjectId(query.uid) });
   }
   const propList = Object.keys(unique);
 

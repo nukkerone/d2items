@@ -26,7 +26,7 @@ const update = async (req, res) => {
   const data = req.body.data;
   delete data._id;
   const uid = req.query.uid;
-  const result = await db.collection('generated').updateOne({ _id: new ObjectId(uid) }, { $set: data });
+  const result = await db.collection('unique_scrapped_normalized').updateOne({ _id: new ObjectId(uid) }, { $set: data });
   res.json({ success: true });
 }
 
@@ -34,7 +34,7 @@ const addEntry = async (req, res) => {
   const { db } = await connectToDatabase();
   const { key, value } = req.body.data;
   const uid = req.query.uid;
-  const result = await db.collection('generated').updateOne({ _id: new ObjectId(uid) }, { $set: {[key]: value} });
+  const result = await db.collection('unique_scrapped_normalized').updateOne({ _id: new ObjectId(uid) }, { $set: {[key]: value} });
   res.json({ success: true });
 }
 
@@ -42,7 +42,7 @@ const removeEntry = async (req, res) => {
   const { db } = await connectToDatabase();
   const { key } = req.body.data;
   const uid = req.query.uid;
-  const result = await db.collection('generated').updateOne({ _id: new ObjectId(uid) }, { $unset: { [key]: true } });
+  const result = await db.collection('unique_scrapped_normalized').updateOne({ _id: new ObjectId(uid) }, { $unset: { [key]: true } });
   res.json({ success: true });
 }
 
