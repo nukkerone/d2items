@@ -12,7 +12,7 @@ export default function Uniques({ uniqueitems }) {
   useEffect(() => {
     miniSearch = new MiniSearch({
       idField: '_id',
-      fields: ['index', '*type', 'tierName', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12'], // fields to index for full-text search
+      fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
       storeFields: ['index', '*type'], // fields to return with search results
       searchOptions: {
         prefix: true,
@@ -63,23 +63,25 @@ export default function Uniques({ uniqueitems }) {
             items.map(item =>
               <div key={item._id} className="col-lg-4">
                 <div className="card">
-                  <h2>{item.index}</h2>
-                  <h3>{item.tierName} Unique</h3>
-                  <h4>{item['*type']}</h4>
+                  <h2>{item.name}</h2>
+                  <h3>{item.tier}</h3>
+                  <h4>{item.base}</h4>
 
-                  {item['is2handed'] ?
-                    <>
-                      <p>2H damage: {item['2handmindam'] + '-' + item['2handmaxdam']}</p>
-                    </>
-                    :
-                    <>
-                      <p>1H damage: {item.mindam + '-' + item.maxdam}</p>
-                    </>
+                  <br />
+                  
+                  {
+                    Object.entries(item).map(([key, val], i) => {
+                      const match = key.match(/(prop)[0-9]+/g);
+                      if (match && match.length > 0) {
+                        return null;
+                      }
+                      if (['_id', 'name', 'tier', 'base', 'patch', 'only'].indexOf(key) >= 0) {
+                        return null;
+                      }
+                      return <p className="stat" key={key}>{key.charAt(0).toUpperCase() + key.replace('_', ' ').slice(1)}: <span>{ val }</span></p>
+                    })
                   }
-                  <p>Base Speed: {item.speed}</p>
-                  <p>Durability: {item.durability}</p>
-                  <p>Req level: {item['lvl req']}</p>
-
+                  
                   <br />
 
                   {
@@ -90,6 +92,11 @@ export default function Uniques({ uniqueitems }) {
                       }
                     })
                   }
+
+                  <br />
+
+                  {item.patch ? <p className="patch">{item.patch}</p> : null}
+                  {item.only ? <p className="only">{item.only}</p> : null}
 
                 </div>
               </div>
@@ -249,7 +256,7 @@ export default function Uniques({ uniqueitems }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const uniqueitems = await db.collection('generated').find({}).limit(500).toArray();
+  const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
 
   return {
     props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },
