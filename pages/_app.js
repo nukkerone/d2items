@@ -1,5 +1,6 @@
-import 'bootstrap/dist/css/bootstrap.css';
+import '../styles/custom-theme.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import '../styles/styles.scss';
 import { useEffect } from 'react';
 import { ToastContainer } from "react-toastify";
 

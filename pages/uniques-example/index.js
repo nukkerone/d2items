@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 
-export default function Uniques({ uniqueitems }) {
+export default function UniquesExample({ uniqueitems }) {
   let miniSearch;
 
   const [items, setItems] = useState(uniqueitems)
@@ -35,7 +35,8 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
-  
+
+
   return (
     <div className="container">
       <Head>
@@ -53,7 +54,7 @@ export default function Uniques({ uniqueitems }) {
           <form className="col-lg-12">
             <div className="mb-3">
               <label htmlFor="search" className="form-label">Search for items</label>
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler}/>
+              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
             </div>
           </form>
         </div>
@@ -112,12 +113,14 @@ export default function Uniques({ uniqueitems }) {
 
       </div>
 
-   
+
     </div>
   )
 }
 
-
+/**
+ * This executes in the server, and passes the props
+ */
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
   const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
