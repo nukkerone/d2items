@@ -5,31 +5,31 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 
-export default function UniquesExample({ uniqueitems }) {
+export default function Base({ baseitems }) {
   let miniSearch;
 
-  const [items, setItems] = useState(uniqueitems)
+  const [items, setItems] = useState(baseitems)
 
   useEffect(() => {
     miniSearch = new MiniSearch({
       idField: '_id',
-      fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
-      storeFields: ['name', 'base'], // fields to return with search results
+      fields: ['name', 'tier', 'variant1', 'variant2', 'variant3', 'variant4', 'variant5', 'variant6', 'variant7', 'variant8', 'variant9', 'variant10', 'variant11', 'variant12', 'only'], // fields to index for full-text search
+      storeFields: ['name'], // fields to return with search results
       searchOptions: {
         prefix: true,
       }
     });
 
-    miniSearch.addAll(uniqueitems);
+    miniSearch.addAll(baseitems);
   }, []);
 
   const searchHandler = (e) => {
     if (e.target.value) {
       const results = miniSearch.search(e.target.value).map(i => i.id);
-      const items = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
+      const items = baseitems.filter(i => results.indexOf(i._id) >= 0);
       setItems(items);
     } else {
-      setItems(uniqueitems);
+      setItems(baseitems);
     }
   };
 
@@ -37,11 +37,10 @@ export default function UniquesExample({ uniqueitems }) {
     () => debounce(searchHandler, 300)
     , []);
 
-
   return (
     <div className="container">
       <Head>
-        <title>Unique items</title>
+        <title>Base items</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -50,7 +49,7 @@ export default function UniquesExample({ uniqueitems }) {
         <UpperNav></UpperNav>
 
         <h1 className="title mt-5 mb-5">
-          Unique Items
+          Base Items
         </h1>
 
         <div className="row">
@@ -68,21 +67,21 @@ export default function UniquesExample({ uniqueitems }) {
               <div key={item._id} className="col-lg-4">
                 <div className="card mb-3">
                   <div className="card-body">
+
                     <h2>{item.name}</h2>
                     <h3>{item.tier}</h3>
-                    <h4>{item.base}</h4>
 
                     <br />
 
                     {
                       Object.entries(item).map(([key, val], i) => {
                         // We avoid entries that are props
-                        const match = key.match(/(prop)[0-9]+/g);
+                        const match = key.match(/(variant)[0-9]+/g);
                         if (match && match.length > 0) {
                           return null;
                         }
                         // We avoid the following fields
-                        if (['_id', 'name', 'tier', 'base', 'patch', 'only'].indexOf(key) >= 0) {
+                        if (['_id', 'name', 'tier', 'only', 'image'].indexOf(key) >= 0) {
                           return null;
                         }
                         // We print the stats 
@@ -92,20 +91,19 @@ export default function UniquesExample({ uniqueitems }) {
 
                     <br />
 
-                    {
-                      Object.entries(item).map(([key, val], i) => {
-                        // Print the props
-                        const match = key.match(/(prop)[0-9]+/g);
-                        if (match && match.length > 0) {
-                          return <p className="property" key={i}>{val}</p>
-                        }
-                      })
-                    }
+                    {item.only ? <p className="only">{item.only}</p> : null}
 
                     <br />
 
-                    {item.patch ? <p className="patch">{item.patch}</p> : null}
-                    {item.only ? <p className="only">{item.only}</p> : null}
+                    {
+                      Object.entries(item).map(([key, val], i) => {
+                        // Print the props
+                        const match = key.match(/(variant)[0-9]+/g);
+                        if (match && match.length > 0) {
+                          return <p className="variant" key={i}>{val}</p>
+                        }
+                      })
+                    }
                   </div>
 
                 </div>
@@ -116,19 +114,16 @@ export default function UniquesExample({ uniqueitems }) {
 
       </div>
 
-
     </div>
   )
 }
 
-/**
- * This executes in the server, and passes the props
- */
+
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
+  const baseitems = await db.collection('base_scrapped_normalized').find({}).limit(500).toArray();
 
   return {
-    props: { uniqueitems: JSON.parse(JSON.stringify(uniqueitems)) },
+    props: { baseitems: JSON.parse(JSON.stringify(baseitems)) },
   }
 }

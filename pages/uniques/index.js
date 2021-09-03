@@ -3,6 +3,7 @@ import { debounce } from 'lodash';
 import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
+import UpperNav from '../../components/upper-nav';
 
 export default function Uniques({ uniqueitems }) {
   let miniSearch;
@@ -45,6 +46,8 @@ export default function Uniques({ uniqueitems }) {
       </Head>
 
       <div className="container">
+        <UpperNav></UpperNav>
+
         <h1 className="title mt-5 mb-5">
           Unique Items
         </h1>
