@@ -21,6 +21,13 @@ function UpperNav() {
           </a>
         </Link>
       </li>
+      <li>
+        <Link href="/sets">
+          <a className={router.pathname == "/sets" ? "active" : ""}>
+            Sets
+          </a>
+        </Link>
+      </li>
     </ul>
   )
 }
