@@ -2,4 +2,102 @@
 
 body {
   font-family: "proxima-nova";
+  background-image: url(../images/stone-bg.jpeg);
+  background-repeat: repeat;
+  font-size: 14px;
+}
+.container-bg {
+	background-image: url(../images/runesbg.png);
+	background-repeat: no-repeat;
+	background-size: 50%;
+	background-position: top center;
+	padding-top: 20px;
+}
+.item-nav {
+	color: #fff;
+	list-style-type: none;
+	width: 650px;
+	margin: 0 auto 20px auto;
+	text-align: center;
+}
+.item-nav li {display: inline;}
+.item-nav li a {color: fff !important;margin: 0px 20px;}
+.logo {
+	font-family: exocet, sans-serif;
+	font-style: normal;
+	margin:0 auto;
+	text-align: center;
+	margin: 40px 0px;
+}
+.logo h1 {
+	font-weight: 400;
+	color: #fff;
+	font-size: 60px;
+}
+.logo h1 span {color:#E46000;}
+h1.title {
+	font-size: 20px;
+	color: #fff;
+	margin: 10px 0px;
+}
+#search {
+	background-color: rgba(0,0,0,0.7);
+	border: 1px solid #4E4E4E;
+	border-radius: 2px;
+	font-family: exocet, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	color: #CDB38D;
+	font-size: 20px;
+	padding: 17px 20px;
+	background-image: url(../images/search.svg);
+	background-repeat: no-repeat;
+	background-size: 25px;
+	background-position: 97% 50%;
+	max-width: 650px;
+	margin: 0 auto;
+}
+.card {
+	background-color: rgba(0,0,0,0.7);
+	border: 1px solid #4E4E4E;
+	border-radius: 2px;
+	text-align: center;
+}
+
+.card-body h2 {
+	font-family: exocet, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	color: #CDB38D;
+	font-size: 20px;
+}
+.card-body {color: #fff;}
+.card-body h3 {
+	font-size: 14px;
+	color: #A2A2A2;
+}
+.card-body h4 {
+	font-size: 14px;
+	color: #fff;
+}
+.card-body .property {
+	color: #7286F2;
+	font-size: 14px;
+	margin: 0;
+}
+
+.card-body .stat {
+	color: #fff;
+	font-size: 14px;
+	margin: 0;
+}
+.card-body .stat span {
+	color: #7286F2;
+	font-size: 14px;
+	margin: 0;
+}
+.card-body .patch {
+	color: #CDB38D;
+	font-size: 14px;
+	margin: 0;
 }
