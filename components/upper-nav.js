@@ -28,6 +28,20 @@ function UpperNav() {
           </a>
         </Link>
       </li>
+      <li>
+        <Link href="/misc">
+          <a className={router.pathname == "/misc" ? "active" : ""}>
+            Misc
+          </a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/runewords">
+          <a className={router.pathname == "/runewords" ? "active" : ""}>
+            Runewords
+          </a>
+        </Link>
+      </li>
     </ul>
   )
 }
