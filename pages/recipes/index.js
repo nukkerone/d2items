@@ -5,43 +5,39 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 
-export default function Runewords({ runewords }) {
+export default function Recipes({ recipes }) {
   let miniSearch;
 
-  const [items, setRunewords] = useState(runewords)
+  const [items, setRecipes] = useState(recipes)
 
   useEffect(() => {
     miniSearch = new MiniSearch({
       idField: '_id',
-      fields: ['name', 'level', 'sockets', 'runeList', 'itemsToInsertTo', 'props'], // fields to index for full-text search
+      fields: ['name', 'ingredients', 'product'], // fields to index for full-text search
       storeFields: ['name'], // fields to return with search results
       searchOptions: {
         prefix: true,
       },
       extractField: (document, fieldName) => {
         switch (fieldName) {
-          case 'runeList':
-            return document[fieldName]?.map(insertProp => insertProp.rune).join(' ');
-          case 'itemsToInsertTo':
-            return document[fieldName]?.join(' ');
-          case 'props':
-            return document[fieldName]?.join(' ');
+          case 'ingredients':
+            return document[fieldName]?.map(ingredient => ingredient.ingredient).join(' ');
           default:
             return document[fieldName];
         }
       }
     });
 
-    miniSearch.addAll(runewords);
+    miniSearch.addAll(recipes);
   }, []);
 
   const searchHandler = (e) => {
     if (e.target.value) {
       const results = miniSearch.search(e.target.value).map(i => i.id);
-      const items = runewords.filter(i => results.indexOf(i._id) >= 0);
-      setRunewords(items);
+      const items = recipes.filter(i => results.indexOf(i._id) >= 0);
+      setRecipes(items);
     } else {
-      setRunewords(runewords);
+      setRecipes(recipes);
     }
   };
 
@@ -52,7 +48,7 @@ export default function Runewords({ runewords }) {
   return (
     <div className="container">
       <Head>
-        <title>Misc items</title>
+        <title>Recipe items</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -61,7 +57,7 @@ export default function Runewords({ runewords }) {
         <UpperNav></UpperNav>
 
         <h1 className="title mt-5 mb-5">
-          Misc Items
+          Recipe Items
         </h1>
 
         <div className="row">
@@ -80,35 +76,25 @@ export default function Runewords({ runewords }) {
                 <div className="card mb-3">
                   <div className="card-body">
                     <h2>{item.name}</h2>
-                    <h3>Patch { item.patch } Runeword</h3>
+                    <h3>{item.type}</h3>
 
                     <br />
 
-                    {
-                      item.runeList.map(runeItem => <span className="rune">{ runeItem.rune }</span>)
-                    }
-
-                    <br />
-
-                    <p>Req level: {item.level}</p>
-                    
-                    <br />
-
-                    <p>
-                      {item.sockets} socket
+                    <div className="ingredients">
                       {
-                        item.itemsToInsertTo.map(itemsToInsertTo => <span className="item-to-insert-to">{itemsToInsertTo}</span>)
+                        item.ingredients.map(ingredient => <p className="ingredient">
+                          <span className="qty">{ingredient.qty}</span> <span>{ ingredient.ingredient }</span>
+                        </p>)
                       }
-                    </p>
+                    </div>
 
                     <br />
 
-                    {
-                      item.props.map(prop => <p className="property">{ prop }</p>)
-                    }
-
-                    {item.ladderOnly ? <p className="ladder-only">Ladder only</p> : null}
-
+                    <p>Produces</p>
+                    <p className="produces">
+                      <span className="qty">{item.productQty}</span> <span className="product">{item.product}</span>
+                    </p>
+                    
                   </div>
                 </div>
               </div>
@@ -125,9 +111,9 @@ export default function Runewords({ runewords }) {
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()
-  const runewords = await db.collection('runeword_scrapped_normalized').find({}).limit(500).toArray();
+  const recipes = await db.collection('recipe_scrapped_normalized').find({}).limit(500).toArray();
 
   return {
-    props: { runewords: JSON.parse(JSON.stringify(runewords)) },
+    props: { recipes: JSON.parse(JSON.stringify(recipes)) },
   }
 }
