@@ -76,7 +76,7 @@ export default function Runewords({ runewords }) {
           Diablo 2 Resurrected Runewords
         </h1>
 
-        <div className="row">
+        <div className="row" data-masonry='{"percentPosition": true }'>
           {
             items.map(item => {
               return <div key={item._id} className="col-lg-4">

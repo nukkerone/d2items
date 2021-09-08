@@ -15,6 +15,8 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+          <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+
         </body>
       </Html>
     )

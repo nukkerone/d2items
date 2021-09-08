@@ -63,7 +63,7 @@ export default function Base({ baseitems }) {
           Diablo 2 Resurrected Base Items
         </h1>
 
-        <div className="row">
+        <div className="row" data-masonry='{"percentPosition": true }'>
           {
             items.map(item =>
               <div key={item._id} className="col-lg-4">

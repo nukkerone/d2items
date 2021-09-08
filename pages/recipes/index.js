@@ -72,7 +72,7 @@ export default function Recipes({ recipes }) {
           Diablo 2 Resurrected Cube Recipes
         </h1>
 
-        <div className="row">
+        <div className="row" data-masonry='{"percentPosition": true }'>
           {
             items.map(item => {
               return <div key={item._id} className="col-lg-4">

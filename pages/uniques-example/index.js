@@ -44,6 +44,7 @@ export default function UniquesExample({ uniqueitems }) {
         <title>Unique items</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
       </Head>
 
       <div className="container">
@@ -65,7 +66,7 @@ export default function UniquesExample({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <div className="row">
+        <div className="row" data-masonry='{"percentPosition": true }'>
           {
             items.map(item =>
               <div key={item._id} className="col-lg-4">
