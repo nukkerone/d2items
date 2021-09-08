@@ -2,7 +2,7 @@ import React from 'react'
 
 function RuneMiscCard({ item }) {
   return (
-    <div key={item._id} className="col-lg-4">
+    <div key={item._id} className="col-lg-4 grid-item">
       <div className="card mb-3">
         <div className="card-body">
           <h2>{item.name}</h2>

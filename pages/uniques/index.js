@@ -64,10 +64,10 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <div className="row" data-masonry='{"percentPosition": true }'>
+        <div className="row grid">
           {
             items.map(item =>
-              <div key={item._id} className="col-lg-4">
+              <div key={item._id} className="col-lg-4 grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
                     <h2>{item.name}</h2>

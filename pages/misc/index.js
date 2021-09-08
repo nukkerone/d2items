@@ -79,7 +79,7 @@ export default function Misc({ miscitems }) {
           Diablo 2 Resurrected Runes &amp; Misc Items
         </h1>
 
-        <div className="row" data-masonry='{"percentPosition": true }'>
+        <div className="row grid">
           {
             items.map(item => {
               return item.type === 'rune' ?

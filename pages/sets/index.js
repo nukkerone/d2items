@@ -76,7 +76,7 @@ export default function Sets({ setitems }) {
           Diablo 2 Resurrected Sets
         </h1>
 
-        <div className="row" data-masonry='{"percentPosition": true }'>
+        <div className="row grid">
           {
             items.map(item =>
             {

@@ -76,10 +76,10 @@ export default function Runewords({ runewords }) {
           Diablo 2 Resurrected Runewords
         </h1>
 
-        <div className="row" data-masonry='{"percentPosition": true }'>
+        <div className="row grid">
           {
             items.map(item => {
-              return <div key={item._id} className="col-lg-4">
+              return <div key={item._id} className="col-lg-4 grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
                     <h2>{item.name}</h2>
