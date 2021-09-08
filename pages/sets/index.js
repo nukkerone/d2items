@@ -50,7 +50,7 @@ export default function Sets({ setitems }) {
     , []);
 
   return (
-    <div className="container">
+    <div className="container container-bg container-sets">
       <Head>
         <title>Set items</title>
         <link rel="icon" href="/favicon.ico" />
@@ -58,20 +58,23 @@ export default function Sets({ setitems }) {
       </Head>
 
       <div className="container">
-        <UpperNav></UpperNav>
+        
+      <div class="logo"><h1><span>D2</span>BASE</h1></div>
 
-        <h1 className="title mt-5 mb-5">
-          Set Items
-        </h1>
 
         <div className="row">
           <form className="col-lg-12">
             <div className="mb-3">
-              <label htmlFor="search" className="form-label">Search for items</label>
               <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
             </div>
           </form>
         </div>
+
+        <UpperNav></UpperNav>
+
+        <h1 className="title">
+          Diablo 2 Resurrected Sets
+        </h1>
 
         <div className="row">
           {

@@ -53,7 +53,7 @@ export default function Misc({ miscitems }) {
     , []);
 
   return (
-    <div className="container">
+    <div className="container container-bg container-misc">
       <Head>
         <title>Misc items</title>
         <link rel="icon" href="/favicon.ico" />
@@ -61,20 +61,23 @@ export default function Misc({ miscitems }) {
       </Head>
 
       <div className="container">
-        <UpperNav></UpperNav>
+        
+      <div class="logo"><h1><span>D2</span>BASE</h1></div>
 
-        <h1 className="title mt-5 mb-5">
-          Misc Items
-        </h1>
 
         <div className="row">
           <form className="col-lg-12">
             <div className="mb-3">
-              <label htmlFor="search" className="form-label">Search for items</label>
               <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
             </div>
           </form>
         </div>
+
+        <UpperNav></UpperNav>
+
+        <h1 className="title">
+          Diablo 2 Resurrected Runes &amp; Misc Items
+        </h1>
 
         <div className="row">
           {
