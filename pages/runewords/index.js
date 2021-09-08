@@ -85,7 +85,7 @@ export default function Runewords({ runewords }) {
                     <br />
 
                     {
-                      item.runeList.map(runeItem => <span className="rune">{ runeItem.rune }</span>)
+                      item.runeList.map((runeItem, i) => <span className="rune" key={i}>{ runeItem.rune }</span>)
                     }
 
                     <br />
@@ -97,14 +97,14 @@ export default function Runewords({ runewords }) {
                     <p>
                       {item.sockets} socket
                       {
-                        item.itemsToInsertTo.map(itemsToInsertTo => <span className="item-to-insert-to">{itemsToInsertTo}</span>)
+                        item.itemsToInsertTo.map((itemsToInsertTo, i) => <span className="item-to-insert-to" key={i}>{itemsToInsertTo}</span>)
                       }
                     </p>
 
                     <br />
 
                     {
-                      item.props.map(prop => <p className="property">{ prop }</p>)
+                      item.props.map((prop, i) => <p className="property" key={i}>{ prop }</p>)
                     }
 
                     {item.ladderOnly ? <p className="ladder-only">Ladder only</p> : null}

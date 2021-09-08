@@ -82,7 +82,7 @@ export default function Recipes({ recipes }) {
 
                     <div className="ingredients">
                       {
-                        item.ingredients.map(ingredient => <p className="ingredient">
+                        item.ingredients.map((ingredient, i) => <p className="ingredient" key={i}>
                           <span className="qty">{ingredient.qty}</span> <span>{ ingredient.ingredient }</span>
                         </p>)
                       }

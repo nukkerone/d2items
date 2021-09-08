@@ -11,10 +11,10 @@ function RuneMiscCard({ item }) {
           <br />
 
           {
-            item.insertProps.map(insertProp => <p className="insert-props">
+            item.insertProps.map((insertProp, i) => <div className="insert-props" key={i}>
               <p className="item-to-insert">{insertProp.item}</p>
               <p className="item-to-insert-prop">{ insertProp.prop }</p>
-            </p>)
+            </div>)
           }
 
           <br />
@@ -22,22 +22,22 @@ function RuneMiscCard({ item }) {
           <h4>Ingredient in:</h4>
 
           {
-            item.runeRecipes.map(runeRecipe => <p className="ingredient-item">
+            item.runeRecipes.map((runeRecipe, i) => <div className="ingredient-item" key={i}>
               <p className="recipe">Recipe: {runeRecipe}</p>
-            </p>)
+            </div>)
           }
 
           {
-            item.runeWords.map(runeWord => <p className="ingredient-item">
+            item.runeWords.map((runeWord, i) => <div className="ingredient-item" key={i}>
               <p className="runeword">{runeWord}</p>
-            </p>)
+            </div>)
           }
 
           <h4>Product of:</h4>
           {
-            item.recipeProductOf.map(rpo => <p className="product-of-item">
+            item.recipeProductOf.map((rpo, i) => <div className="product-of-item" key={i}>
               <p className="recipe">Recipe: {rpo}</p>
-            </p>)
+            </div>)
           }
 
         </div>

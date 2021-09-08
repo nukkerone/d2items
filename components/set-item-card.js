@@ -42,9 +42,9 @@ function SetItemCard({ item }) {
           <br />
 
           {
-            item.setStats.map(setStat => <p className="partial-set-props">
+            item.setStats.map((setStat, i) => <div className="partial-set-props" key={i}>
               {setStat.prop} <span> • {setStat.qty}</span>
-            </p>)
+            </div>)
           }
 
           <p className="set">Part of set: {item.setTitle}</p>

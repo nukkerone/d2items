@@ -80,7 +80,7 @@ export default function Misc({ miscitems }) {
           {
             items.map(item => {
               return item.type === 'rune' ?
-                <RuneMiscCard item={item}></RuneMiscCard>
+                <RuneMiscCard item={item} key={item._id}></RuneMiscCard>
                 :
                 null
             })

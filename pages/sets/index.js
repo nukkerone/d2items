@@ -21,7 +21,6 @@ export default function Sets({ setitems }) {
         prefix: true,
       },
       extractField: (document, fieldName) => {
-        debugger;
         switch (fieldName) {
           case 'setStats':
             return document[fieldName]?.map(setStat => setStat.prop).join(' ');
@@ -79,9 +78,9 @@ export default function Sets({ setitems }) {
             items.map(item =>
             {
               return item.tier === 'Full Set' ?
-                <SetRigCard item={item}></SetRigCard>
+                <SetRigCard item={item} key={item._id}></SetRigCard>
                 :
-                <SetItemCard item={item}></SetItemCard>
+                <SetItemCard item={item} key={item._id}></SetItemCard>
             }
             )
           }
