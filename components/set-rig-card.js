@@ -11,7 +11,7 @@ function SetRigCard({ item }) {
           <br />
 
           {
-            item.setItems.map(setPartItem => <p>
+            item.setItems.map((setPartItem, i) => <p key={i}>
               {setPartItem.item} <span> • {setPartItem.type}</span>
             </p>)
           }
