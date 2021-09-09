@@ -44,8 +44,10 @@ const scrap = async () => {
     $runeList.each(function () {
       const $image = $(this).find('div').first();
       const image = $image.length > 0 ? $image[0].attribs['data-background-image'] : null;
+      const width = '20';
+      const height = '20';
       const rune = $(this).find('.z-recipes').text().trim();
-      runeList.push({ rune, image });
+      runeList.push({ image: { src: image, width, height }, rune });
     });
 
     const level = $('.zso_rwlvlrq', $item).text().trim();

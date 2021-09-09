@@ -34,8 +34,11 @@ const scrap = async () => {
   $items.each(function () {
     const $item = $(this);
 
-    const $graphic = $('a .z-graphic', $item);
+    const $graphic = $('a .lozad', $item).first();
     const image = $graphic.length > 0 ? $graphic[0].attribs['data-background-image'] : null;
+    const imageStyle = $graphic.length > 0 ? $graphic[0].attribs['style'] : null;
+    const width = imageStyle.match(/width: \d+px/)[0].replace('width: ', '').replace('px', '');
+    const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
 
     const $name = $('h3 a', $item);
     const name = $name.text();
@@ -62,7 +65,6 @@ const scrap = async () => {
 
     const $variantText = $($tier[1]) ?? null;
 
-    debugger;
     let variants = [];
     if ($variantText) {
       const $variants = $('span a .z-lh-usedin', $variantText.parent());
@@ -74,7 +76,11 @@ const scrap = async () => {
     }
 
     scrapped.push({
-      image, name, tier, stats, only, variants
+      image: {
+        src: image,
+        width,
+        height
+      }, name, tier, stats, only, variants
     });
   });
 

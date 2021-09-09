@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
+import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
@@ -88,7 +89,15 @@ export default function Runewords({ runewords }) {
                     <br />
 
                     {
-                      item.runeList.map((runeItem, i) => <span className="rune" key={i}>{ runeItem.rune }</span>)
+                      item.runeList.map((runeItem, i) => <span className="rune" key={i}>
+                        <Image
+                          src={'https://diablo2.io' + runeItem.image.src}
+                          alt={runeItem.rune}
+                          width={runeItem.image.width}
+                          height={runeItem.image.height}
+                        />
+                        {runeItem.rune}
+                      </span>)
                     }
 
                     <br />

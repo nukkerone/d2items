@@ -43,6 +43,10 @@ const scrap = async () => {
     if (isRune) {
       const $image = $item.first().children('a').first().children('div').first();
       const image = $image.length > 0 ? $image[0].attribs['data-background-image'] : null;
+      const imageStyle = $image.length > 0 ? $image[0].attribs['style'] : null;
+      const width = imageStyle.match(/width: \d+px/)[0].replace('width: ', '').replace('px', '');
+      const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
+
       const level = /(\d+)/.exec(name)[0];
       const type = 'rune';
       const $zVfHideInsert = $('.z-vf-hide', $item)[1];
@@ -72,7 +76,7 @@ const scrap = async () => {
       });
 
       scrapped.push({
-        image, name: h3Text, type, level, insertProps, runeRecipes, runeWords, recipeProductOf
+        image: { src: image, width, height }, name: h3Text, type, level, insertProps, runeRecipes, runeWords, recipeProductOf
       });
     }
 

@@ -33,6 +33,13 @@ const scrap = async () => {
 
   $items.each(function () {
     const $item = $(this);
+
+    const $graphic = $('a .lozad', $item).first();
+    const image = $graphic.length > 0 ? $graphic[0].attribs['data-background-image'] : null;
+    const imageStyle = $graphic.length > 0 ? $graphic[0].attribs['style'] : null;
+    const width = imageStyle.match(/width: \d+px/)[0].replace('width: ', '').replace('px', '');
+    const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
+
     const $name = $('h3 a', $item);
     const name = $name.text().trim().replace('Recipe: ', '');
     const $type = $('h4', $item);
@@ -51,7 +58,7 @@ const scrap = async () => {
       }
       const $ingredient = $image.next().find('a').first();
       const ingredient = $ingredient.text().trim();
-      ingredients.push({ qty, image, ingredient });
+      ingredients.push({ qty, image: { src: image, width: '20', height: '20' }, ingredient });
     });
 
     const productQty = $('.z-recipe-outcome .z-smallstats', $zVfHide).text().trim();
@@ -63,7 +70,11 @@ const scrap = async () => {
     const product = $('.z-recipe-outcome .z-recipes', $zVfHide).text().trim();
 
     scrapped.push({
-      name, type, ingredients, productQty, productImage, product
+      image: {
+        src: image,
+        width,
+        height
+      }, name, type, ingredients, productQty, productImage: { src: productImage, width: '20', height: '20' }, product
     });
 
   });

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
+import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
@@ -78,6 +79,13 @@ export default function Recipes({ recipes }) {
               return <div key={item._id} className="col-lg-4 grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
+                    {item.image?.src && <Image
+                      src={'https://diablo2.io' + item.image.src}
+                      alt={item.name}
+                      width={item.image.width}
+                      height={item.image.height}
+                    />}
+
                     <h2>{item.name}</h2>
                     <h3>{item.type}</h3>
 
@@ -86,7 +94,14 @@ export default function Recipes({ recipes }) {
                     <div className="ingredients">
                       {
                         item.ingredients.map((ingredient, i) => <p className="ingredient" key={i}>
-                          <span className="qty">{ingredient.qty}</span> <span>{ ingredient.ingredient }</span>
+                          <span className="qty">{ingredient.qty}</span>
+                          {ingredient.image?.src && <Image
+                            src={'https://diablo2.io' + ingredient.image.src}
+                            alt={ingredient.ingredient}
+                            width={ingredient.image.width}
+                            height={ingredient.image.height}
+                          />}
+                          <span>{ingredient.ingredient}</span>
                         </p>)
                       }
                     </div>
@@ -95,7 +110,14 @@ export default function Recipes({ recipes }) {
 
                     <p>Produces</p>
                     <p className="produces">
-                      <span className="qty">{item.productQty}</span> <span className="product">{item.product}</span>
+                      <span className="qty">{item.productQty}</span>
+                      {item.productImage?.src && <Image
+                        src={'https://diablo2.io' + item.productImage.src}
+                        alt={item.product}
+                        width={item.productImage.width}
+                        height={item.productImage.height}
+                      />}
+                      <span className="product">{item.product}</span>
                     </p>
                     
                   </div>

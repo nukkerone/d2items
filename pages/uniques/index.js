@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
+import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
@@ -70,6 +71,14 @@ export default function Uniques({ uniqueitems }) {
               <div key={item._id} className="col-lg-4 grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
+
+                    <Image
+                      src={'https://diablo2.io' + item.image.src}
+                      alt={item.name}
+                      width={item.image.width}
+                      height={item.image.height}
+                    />
+
                     <h2>{item.name}</h2>
                     <h3>{item.tier}</h3>
                     <h4>{item.base}</h4>
@@ -84,7 +93,7 @@ export default function Uniques({ uniqueitems }) {
                           return null;
                         }
                         // We avoid the following fields
-                        if (['_id', 'name', 'tier', 'base', 'patch', 'only'].indexOf(key) >= 0) {
+                        if (['_id', 'name', 'tier', 'base', 'patch', 'only', 'image'].indexOf(key) >= 0) {
                           return null;
                         }
                         // We print the stats 

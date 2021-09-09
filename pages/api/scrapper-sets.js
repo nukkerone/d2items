@@ -38,7 +38,6 @@ const scrap = async () => {
     const tierContents = $tier.contents();
     const tier = $tier.contents().first().text().trim();
 
-    debugger;
     if (tier === 'Full Set') {
       const $name = $('h3 a', $item);
       const name = $name.text();
@@ -48,7 +47,20 @@ const scrap = async () => {
       $setItems.each(function () {
         const $item = $(this);
         const $itemType = $('.z-grey', $item);
-        setItems.push({ item: $item.contents().first().text().trim(), type: $itemType.contents().last().text().trim() });
+        const $graphic = $item.prev();
+        const image = $graphic.length > 0 ? $graphic[0].attribs['data-background-image'] : null;
+        const width = '20';
+        const height = '20';
+          
+        setItems.push({
+          image: {
+            src: image,
+            width,
+            height
+          },
+          item: $item.contents().first().text().trim(),
+          type: $itemType.contents().last().text().trim()
+        });
       });
 
       const $zVfHide = $('.z-vf-hide', $item);
@@ -74,8 +86,11 @@ const scrap = async () => {
         name, tier, setItems, partialSetProps, fullSetProps
       });
     } else {
-      const $graphic = $item.children('a').find('div').first();
+      const $graphic = $('a .lozad', $item).first();
       const image = $graphic.length > 0 ? $graphic[0].attribs['data-background-image'] : null;
+      const imageStyle = $graphic.length > 0 ? $graphic[0].attribs['style'] : null;
+      const width = imageStyle.match(/width: \d+px/)[0].replace('width: ', '').replace('px', '');
+      const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
 
       const $name = $('h3 a', $item);
       const name = $name.text();
@@ -120,7 +135,11 @@ const scrap = async () => {
       const only = $only.text() ?? null;
 
       scrapped.push({
-        image, name, tier, base, stats, props, setStats, setTitle, only
+        image: {
+          src: image,
+          width,
+          height
+        }, name, tier, base, stats, props, setStats, setTitle, only
       });
     }
 

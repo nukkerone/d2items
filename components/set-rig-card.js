@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import Image from 'next/image';
 
 function SetRigCard({ item }) {
   return (
@@ -12,6 +13,12 @@ function SetRigCard({ item }) {
 
           {
             item.setItems.map((setPartItem, i) => <p key={i}>
+              <Image
+                src={'https://diablo2.io' + setPartItem.image.src}
+                alt={setPartItem.item}
+                width={setPartItem.image.width}
+                height={setPartItem.image.height}
+              />
               {setPartItem.item} <span> • {setPartItem.type}</span>
             </p>)
           }

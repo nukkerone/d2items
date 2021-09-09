@@ -1,10 +1,19 @@
-import React from 'react'
+import React from 'react';
+import Image from 'next/image';
 
 function SetItemCard({ item }) {
   return (
     <div key={item._id} className="col-lg-4 grid-item">
       <div className="card mb-3">
         <div className="card-body">
+          
+          <Image
+            src={'https://diablo2.io' + item.image.src}
+            alt={item.name}
+            width={item.image.width}
+            height={item.image.height}
+          />
+
           <h2>{item.name}</h2>
           <h3>{item.tier}</h3>
           <h4>{item.base}</h4>
