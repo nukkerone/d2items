@@ -1,18 +1,21 @@
 {
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.3",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.0.0-beta3",
     "cheerio": "^1.0.0-rc.10",
     "lodash": "^4.17.21",
     "minisearch": "^3.0.4",
     "mongodb": "^3.5.9",
     "next": "latest",
+    "next-auth": "^3.29.0",
     "node-fetch": "^2.6.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
