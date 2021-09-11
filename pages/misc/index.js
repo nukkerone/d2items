@@ -97,7 +97,7 @@ export default function Misc({ miscitems }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const { db } = await connectToDatabase()
   const miscitems = await db.collection('misc_scrapped_normalized').find({}).limit(500).toArray();
 

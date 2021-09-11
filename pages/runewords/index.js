@@ -134,7 +134,7 @@ export default function Runewords({ runewords }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const { db } = await connectToDatabase()
   const runewords = await db.collection('runeword_scrapped_normalized').find({}).limit(500).toArray();
 

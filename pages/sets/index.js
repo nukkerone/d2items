@@ -93,7 +93,7 @@ export default function Sets({ setitems }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const { db } = await connectToDatabase()
   const setitems = await db.collection('set_scrapped_normalized').find({}).limit(500).toArray();
 

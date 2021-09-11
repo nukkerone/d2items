@@ -134,7 +134,7 @@ export default function Recipes({ recipes }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const { db } = await connectToDatabase()
   const recipes = await db.collection('recipe_scrapped_normalized').find({}).limit(500).toArray();
 
