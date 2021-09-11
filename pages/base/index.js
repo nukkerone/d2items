@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
+import CustomMasonry from '../../components/custom-masonry';
 
 export default function Base({ baseitems }) {
   let miniSearch;
@@ -47,7 +48,7 @@ export default function Base({ baseitems }) {
       </Head>
       <div className="container">
         
-      <div class="logo"><h1><span>D2</span>BASE</h1></div>
+      <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
 
         <div className="row">
@@ -65,9 +66,10 @@ export default function Base({ baseitems }) {
         </h1>
 
         <div className="row grid">
-          {
-            items.map(item =>
-              <div key={item._id} className="col-lg-4 grid-item">
+          <CustomMasonry
+            items={items}
+            render={({ data: item }) => {
+              return <div key={item._id} className="grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
 
@@ -118,8 +120,7 @@ export default function Base({ baseitems }) {
 
                 </div>
               </div>
-            )
-          }
+            }}></CustomMasonry>
         </div>
 
       </div>
@@ -127,7 +128,6 @@ export default function Base({ baseitems }) {
     </div>
   )
 }
-
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()

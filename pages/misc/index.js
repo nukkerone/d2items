@@ -5,6 +5,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import RuneMiscCard from '../../components/rune-misc-card';
+import CustomMasonry from '../../components/custom-masonry';
 
 export default function Misc({ miscitems }) {
   let miniSearch;
@@ -80,14 +81,14 @@ export default function Misc({ miscitems }) {
         </h1>
 
         <div className="row grid">
-          {
-            items.map(item => {
+          <CustomMasonry
+            items={items}
+            render={({ data: item }) => {
               return item.type === 'rune' ?
                 <RuneMiscCard item={item} key={item._id}></RuneMiscCard>
                 :
                 null
-            })
-          }
+            }}></CustomMasonry>
         </div>
 
       </div>
@@ -95,7 +96,6 @@ export default function Misc({ miscitems }) {
     </div>
   )
 }
-
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()

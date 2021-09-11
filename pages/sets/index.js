@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
+import CustomMasonry from '../../components/custom-masonry';
 import SetItemCard from '../../components/set-item-card';
 import SetRigCard from '../../components/set-rig-card';
 
@@ -59,8 +60,7 @@ export default function Sets({ setitems }) {
 
       <div className="container">
         
-      <div class="logo"><h1><span>D2</span>BASE</h1></div>
-
+        <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
         <div className="row">
           <form className="col-lg-12">
@@ -77,16 +77,14 @@ export default function Sets({ setitems }) {
         </h1>
 
         <div className="row grid">
-          {
-            items.map(item =>
-            {
+          <CustomMasonry
+            items={items}
+            render={({ data: item }) => {
               return item.tier === 'Full Set' ?
                 <SetRigCard item={item} key={item._id}></SetRigCard>
                 :
                 <SetItemCard item={item} key={item._id}></SetItemCard>
-            }
-            )
-          }
+            }}></CustomMasonry>
         </div>
 
       </div>
@@ -94,7 +92,6 @@ export default function Sets({ setitems }) {
     </div>
   )
 }
-
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()

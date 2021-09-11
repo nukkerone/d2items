@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 function SetItemCard({ item }) {
   return (
-    <div key={item._id} className="col-lg-4 grid-item">
+    <div key={item._id} className="grid-item">
       <div className="card mb-3">
         <div className="card-body">
           

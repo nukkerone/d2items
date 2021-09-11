@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
+import CustomMasonry from '../../components/custom-masonry';
 
 export default function Runewords({ runewords }) {
   let miniSearch;
@@ -60,8 +61,7 @@ export default function Runewords({ runewords }) {
 
       <div className="container">
         
-      <div class="logo"><h1><span>D2</span>BASE</h1></div>
-
+        <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
         <div className="row">
           <form className="col-lg-12">
@@ -78,13 +78,14 @@ export default function Runewords({ runewords }) {
         </h1>
 
         <div className="row grid">
-          {
-            items.map(item => {
-              return <div key={item._id} className="col-lg-4 grid-item">
+          <CustomMasonry
+            items={items}
+            render={({ data: item }) => {
+              return <div key={item._id} className="grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
                     <h2>{item.name}</h2>
-                    <h3>Patch { item.patch } Runeword</h3>
+                    <h3>Patch {item.patch} Runeword</h3>
 
                     <br />
 
@@ -103,7 +104,7 @@ export default function Runewords({ runewords }) {
                     <br />
 
                     <p>Req level: {item.level}</p>
-                    
+
                     <br />
 
                     <p>
@@ -116,7 +117,7 @@ export default function Runewords({ runewords }) {
                     <br />
 
                     {
-                      item.props.map((prop, i) => <p className="property" key={i}>{ prop }</p>)
+                      item.props.map((prop, i) => <p className="property" key={i}>{prop}</p>)
                     }
 
                     {item.ladderOnly ? <p className="ladder-only">Ladder only</p> : null}
@@ -124,8 +125,7 @@ export default function Runewords({ runewords }) {
                   </div>
                 </div>
               </div>
-            })
-          }
+            }}></CustomMasonry>
         </div>
 
       </div>
@@ -133,7 +133,6 @@ export default function Runewords({ runewords }) {
     </div>
   )
 }
-
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()

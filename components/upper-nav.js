@@ -6,7 +6,7 @@ function UpperNav() {
   const router = useRouter();
 
   return (
-    <ul class="item-nav">
+    <ul className="item-nav">
       <li>
         <Link href="/uniques">
           <a className={router.pathname == "/uniques" ? "active" : ""}>

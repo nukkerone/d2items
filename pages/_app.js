@@ -15,8 +15,8 @@ export default function MyApp({ Component, pageProps }) {
         itemSelector: '.grid-item',
         percentPosition: true
       });
-    });
-     */
+    }); */
+    
   }, []);
 
   return <>
