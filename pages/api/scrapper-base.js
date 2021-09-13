@@ -1,5 +1,6 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import * as cheerio from 'cheerio';
+import urlSlug from 'url-slug';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -42,6 +43,7 @@ const scrap = async () => {
 
     const $name = $('h3 a', $item);
     const name = $name.text();
+    const slug = urlSlug(name);
     const $tier = $('h4', $item);
     const tier = $tier.first().text().trim();
 
@@ -80,7 +82,7 @@ const scrap = async () => {
         src: image,
         width,
         height
-      }, name, tier, stats, only, variants
+      }, slug, name, tier, stats, only, variants
     });
   });
 

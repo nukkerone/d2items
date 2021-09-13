@@ -1,5 +1,6 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import * as cheerio from 'cheerio';
+import urlSlug from 'url-slug';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -41,6 +42,7 @@ const scrap = async () => {
     if (tier === 'Full Set') {
       const $name = $('h3 a', $item);
       const name = $name.text();
+      const slug = urlSlug(name);
 
       const $setItems = $('span a .z-sets-title', $item);
       const setItems = [];
@@ -83,7 +85,7 @@ const scrap = async () => {
       });
 
       scrapped.push({
-        name, tier, setItems, partialSetProps, fullSetProps
+        slug, name, tier, setItems, partialSetProps, fullSetProps
       });
     } else {
       const $graphic = $('a .lozad', $item).first();
@@ -94,6 +96,7 @@ const scrap = async () => {
 
       const $name = $('h3 a', $item);
       const name = $name.text();
+      const slug = urlSlug(name);
 
       let base;
       if (tierContents.length === 3) {
@@ -139,7 +142,7 @@ const scrap = async () => {
           src: image,
           width,
           height
-        }, name, tier, base, stats, props, setStats, setTitle, only
+        }, slug, name, tier, base, stats, props, setStats, setTitle, only
       });
     }
 

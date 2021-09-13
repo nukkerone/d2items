@@ -8,14 +8,6 @@ export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
     // We need this because not all code execute in the browser
     typeof document !== undefined ? require('bootstrap/dist/js/bootstrap') : null;
-    // Init masonry
-    /* window.addEventListener("DOMSubtreeModified", function () {
-      const elem = document.querySelector('.grid');
-      const msnry = new Masonry(elem, {
-        itemSelector: '.grid-item',
-        percentPosition: true
-      });
-    }); */
     
   }, []);
 

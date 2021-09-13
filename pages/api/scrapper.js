@@ -1,6 +1,6 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import * as cheerio from 'cheerio';
-import { exist } from 'mongodb/lib/gridfs/grid_store';
+import urlSlug from 'url-slug';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -43,6 +43,7 @@ const scrap = async () => {
 
     const $name = $('h3 a', $item);
     const name = $name.text();
+    const slug = urlSlug(name);
     const $tier = $('h4', $item);
     const tier = $tier.contents().first().text().trim();
     const $base = $('h4 span a', $item);
@@ -79,7 +80,7 @@ const scrap = async () => {
         width,
         height
       },
-      name, tier, base, stats, props, patch, only
+      slug, name, tier, base, stats, props, patch, only
     });
   });
 
