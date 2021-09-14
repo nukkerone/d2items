@@ -1,3 +1,6 @@
+import { signIn } from 'next-auth/client';
+import { toast } from 'react-toastify';
+
 export default function SignIn() {
 
   const onFormSubmit = async (e) => {
@@ -16,16 +19,19 @@ export default function SignIn() {
       email: email,
       password: password,
     });
+
+    if (status.error) {
+      toast.error('Credentials does not match');
+    } else {
+      toast.success('User authenticated');
+    }
     
-    //Await for data for any desirable next steps
-    const data = await res.json();
-    console.log(data);
   };
 
   return (
     <main className="form-signin">
       <form onSubmit={onFormSubmit}>
-        <h1 className="h3 mb-3 fw-normal text-center mb-4">Create an account</h1>
+        <h1 className="h3 mb-3 fw-normal text-center mb-4">Signin</h1>
 
         <div className="form-floating">
           <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" name="email" />
@@ -37,13 +43,8 @@ export default function SignIn() {
           <label htmlFor="floatingPassword">Password</label>
         </div>
 
-        <div className="form-floating mb-4">
-          <input type="password" className="form-control" id="floatingRepeatPassword" placeholder="Password" name="passwordRepeat" />
-          <label htmlFor="floatingRepeatPassword">Repeat Paswword</label>
-        </div>
-
-        <button className="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
-        <button className="w-100 btn btn-lg btn-link">Sign in</button>
+        <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <button className="w-100 btn btn-lg btn-link">Sign up</button>
       </form>
     </main>
   )
