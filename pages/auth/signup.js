@@ -1,4 +1,21 @@
+import { useEffect } from 'react';
+import { getSession } from 'next-auth/client';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import { data } from 'cheerio/lib/api/attributes';
+
 export default function SignUp() {
+  const router = useRouter();
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        router.replace('/');
+      } else {
+        console.log('Not logged in');
+      }
+    });
+  }, []);
   
   const onFormSubmit = async (e) => {
     e.preventDefault();
@@ -11,7 +28,7 @@ export default function SignUp() {
       return;
     }
     //POST form values
-    const res = await fetch('/api/auth/signup', {
+    let res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,8 +39,14 @@ export default function SignUp() {
       }),
     });
     //Await for data for any desirable next steps
-    const data = await res.json();
-    console.log(data);
+    res = await res.json();
+
+    if (!res && res.error) {
+      toast.error('Credentials does not match');
+    } else {
+      toast.success('User authenticated');
+      router.replace('/auth/signin');
+    }
   };
 
   return (

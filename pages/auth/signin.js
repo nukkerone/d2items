@@ -1,7 +1,20 @@
-import { signIn } from 'next-auth/client';
+import { useEffect } from 'react';
+import { signIn, getSession } from 'next-auth/client';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 export default function SignIn() {
+  const router = useRouter();
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        router.replace('/');
+      } else {
+        console.log('Not logged in');
+      }
+    });
+  }, []);
 
   const onFormSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +37,7 @@ export default function SignIn() {
       toast.error('Credentials does not match');
     } else {
       toast.success('User authenticated');
+      router.replace('/');
     }
     
   };

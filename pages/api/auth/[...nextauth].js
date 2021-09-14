@@ -14,13 +14,14 @@ export default NextAuth({
             async authorize(credentials) {
                 const { db } = await connectToDatabase();
                 const user = await db.collection('users').findOne({ email: credentials.email });
-
+        
                 //Not found - send error res
                 if (!user) {
                     throw new Error('No user found with the provided email');
                 }
                 //Check hased password with DB password
-                const checkPassword = await compare(credentials.passowrd, user.passowrd);
+                
+                const checkPassword = await compare(credentials.password, user.password);
                 //Incorrect password - send response
                 if (!checkPassword) {
                     throw new Error('Password does not match');

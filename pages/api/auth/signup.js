@@ -16,7 +16,7 @@ const signup = async (req, res) => {
 
   //Validate
   if (!email || !email.includes('@') || !password) {
-    res.status(422).json({ message: 'Invalid Data' });
+    res.status(422).json({ message: 'Invalid Data', error: true });
     return;
   }
 
@@ -25,7 +25,7 @@ const signup = async (req, res) => {
 
   //Send error response if duplicate user is found
   if (checkExisting) {
-    res.status(422).json({ message: 'User already exists' });
+    res.status(422).json({ message: 'User already exists', error: true });
     return;
   }
 
@@ -36,5 +36,5 @@ const signup = async (req, res) => {
   });
 
   //Send success response
-  res.status(201).json({ message: 'User created', email });
+  res.status(201).json({ message: 'User created', email, error: false });
 }
