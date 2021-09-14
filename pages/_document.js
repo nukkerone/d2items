@@ -11,10 +11,12 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <link rel="stylesheet" href="https://use.typekit.net/mch6lui.css" />
+          <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
         </Head>
         <body>
           <Main />
           <NextScript />
+
         </body>
       </Html>
     )

@@ -1,6 +1,6 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import * as cheerio from 'cheerio';
-import { exist } from 'mongodb/lib/gridfs/grid_store';
+import urlSlug from 'url-slug';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -35,8 +35,15 @@ const scrap = async () => {
   $items.each(function () {
     const $item = $(this);
 
+    const $graphic = $('a .lozad', $item).first();
+    const image = $graphic.length > 0 ? $graphic[0].attribs['data-background-image'] : null;
+    const imageStyle = $graphic.length > 0 ? $graphic[0].attribs['style'] : null;
+    const width = imageStyle.match(/width: \d+px/)[0].replace('width: ', '').replace('px', '');
+    const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
+
     const $name = $('h3 a', $item);
     const name = $name.text();
+    const slug = urlSlug(name);
     const $tier = $('h4', $item);
     const tier = $tier.contents().first().text().trim();
     const $base = $('h4 span a', $item);
@@ -68,7 +75,12 @@ const scrap = async () => {
     const only = $only.text() ?? null;
 
     scrapped.push({
-      name, tier, base, stats, props, patch, only
+      image: {
+        src: image,
+        width,
+        height
+      },
+      slug, name, tier, base, stats, props, patch, only
     });
   });
 

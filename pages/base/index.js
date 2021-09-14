@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
+import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
+import CustomMasonry from '../../components/custom-masonry';
 
 export default function Base({ baseitems }) {
   let miniSearch;
@@ -38,35 +40,45 @@ export default function Base({ baseitems }) {
     , []);
 
   return (
-    <div className="container">
+    <div className="container container-bg container-base">
       <Head>
         <title>Base items</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-
       <div className="container">
-        <UpperNav></UpperNav>
+        
+      <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
-        <h1 className="title mt-5 mb-5">
-          Base Items
-        </h1>
 
         <div className="row">
           <form className="col-lg-12">
             <div className="mb-3">
-              <label htmlFor="search" className="form-label">Search for items</label>
               <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
             </div>
           </form>
         </div>
 
-        <div className="row">
-          {
-            items.map(item =>
-              <div key={item._id} className="col-lg-4">
+        <UpperNav></UpperNav>
+
+        <h1 className="title">
+          Diablo 2 Resurrected Base Items
+        </h1>
+
+        <div className="row grid">
+          <CustomMasonry
+            items={items}
+            render={({ data: item }) => {
+              return <div key={item._id} className="grid-item">
                 <div className="card mb-3">
                   <div className="card-body">
+
+                    <Image
+                      src={'https://diablo2.io' + item.image.src}
+                      alt={item.name}
+                      width={item.image.width}
+                      height={item.image.height}
+                    />
 
                     <h2>{item.name}</h2>
                     <h3>{item.tier}</h3>
@@ -108,8 +120,7 @@ export default function Base({ baseitems }) {
 
                 </div>
               </div>
-            )
-          }
+            }}></CustomMasonry>
         </div>
 
       </div>
@@ -117,7 +128,6 @@ export default function Base({ baseitems }) {
     </div>
   )
 }
-
 
 export async function getServerSideProps(context) {
   const { db } = await connectToDatabase()

@@ -14,7 +14,7 @@ const get = async (req, res) => {
     const items = await scrap();
     await persist(items);
   } catch (e) {
-    console.log(e);
+    console.log('exception ', e);
     return res.json({ success: false });
   }
 
@@ -22,7 +22,7 @@ const get = async (req, res) => {
 }
 
 const scrap = async () => {
-  const url = 'https://diablo2.io/base';
+  const url = 'https://diablo2.io/recipes';
   let resp = await fetch(url, {
     method: 'GET',
   });
@@ -42,48 +42,43 @@ const scrap = async () => {
     const height = imageStyle.match(/height: \d+px/)[0].replace('height: ', '').replace('px', '');
 
     const $name = $('h3 a', $item);
-    const name = $name.text();
+    const name = $name.text().trim().replace('Recipe: ', '');
     const slug = urlSlug(name);
-    const $tier = $('h4', $item);
-    const tier = $tier.first().text().trim();
+    const $type = $('h4', $item);
+    const type = $type.text().trim();
+    const $zVfHide = $item.children('div.z-vf-hide')[1];
+    const $recipeInput = $('.z-recipe-input', $zVfHide);
+    const $ingredients = $('span.z-smallstats', $recipeInput);
+    const ingredients = [];
 
-    const $smallstats = $('.z-smallstats', $item);
-
-    const $statVals = $('span:not(.z-hidden):not(.z-white)', $smallstats);
-
-    const stats = [];
-
-    $statVals.each(function () {
-      const $val = $(this);
-      const $key = $val.prev();
-      stats.push({ key: $key.text().replace(':', '').replace(' ', '_').toLowerCase(), val: $val.text() });
+    $ingredients.each(function () {
+      const qty = $(this).text().trim();
+      let $image = $(this).next();
+      let image = null;
+      if ($image.is('div')) {
+        image = $image[0].attribs['data-background-image'];
+      }
+      const $ingredient = $image.next().find('a').first();
+      const ingredient = $ingredient.text().trim();
+      ingredients.push({ qty, image: { src: image, width: '20', height: '20' }, ingredient });
     });
 
-    /* const $patch = $('.z-vf-hide span a', $item);
-    const patch = $patch.text() ?? null; */
-    const $zvfhide = $('.z-vf-hide', $item);
-    const $only = $('.error', $zvfhide);
-    const only = $only.text() ?? null;
-
-    const $variantText = $($tier[1]) ?? null;
-
-    let variants = [];
-    if ($variantText) {
-      const $variants = $('span a .z-lh-usedin', $variantText.parent());
-      $variants.each(function () {
-        const variant = $(this).text().trim();
-        const variantTier = $(this).next().text().trim();
-        variants.push({ variant, variantTier });
-      });
+    const productQty = $('.z-recipe-outcome .z-smallstats', $zVfHide).text().trim();
+    const $productImage = $('.z-recipe-outcome .z-smallstats', $zVfHide).next();
+    let productImage = null;
+    if ($productImage.is('div')) {
+      productImage = $productImage[0].attribs['data-background-image'];
     }
+    const product = $('.z-recipe-outcome .z-recipes', $zVfHide).text().trim();
 
     scrapped.push({
       image: {
         src: image,
         width,
         height
-      }, slug, name, tier, stats, only, variants
+      }, slug, name, type, ingredients, productQty, productImage: { src: productImage, width: '20', height: '20' }, product
     });
+
   });
 
   return scrapped;
@@ -96,12 +91,12 @@ const persist = async (items) => {
   /* if (exists.find(c => c.name === 'unique_scrapped')) {
     await db.collection('unique_scrapped').drop();
   } */
-  if (exists.find(c => c.name === 'base_scrapped_normalized')) {
-    await db.collection('base_scrapped_normalized').drop();
+  if (exists.find(c => c.name === 'recipe_scrapped_normalized')) {
+    await db.collection('recipe_scrapped_normalized').drop();
   }
-  
+
   //await db.collection('unique_scrapped').insertMany(normalizeItems(items));
-  await db.collection('base_scrapped_normalized').insertMany(normalizeItems(items));
+  await db.collection('recipe_scrapped_normalized').insertMany(normalizeItems(items));
 }
 
 const normalizeItems = (items) => {
@@ -109,14 +104,7 @@ const normalizeItems = (items) => {
 
   for (const item of items) {
     let normalized = { ...item };
-    delete normalized.stats;
-    delete normalized.variants;
-    for (const stat of item.stats) {
-      normalized[stat.key] = stat.val;
-    }
-    for (let i=1; i <= item.variants.length; i++) {
-      normalized['variant' + i] = item.variants[i - 1].variant + ' ' + item.variants[i - 1].variantTier;
-    }
+
     normalizedItems.push(normalized);
   }
 

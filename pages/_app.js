@@ -7,7 +7,8 @@ import { ToastContainer } from "react-toastify";
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
     // We need this because not all code execute in the browser
-    typeof document !== undefined ? require('bootstrap/dist/js/bootstrap') : null
+    typeof document !== undefined ? require('bootstrap/dist/js/bootstrap') : null;
+    
   }, []);
 
   return <>
