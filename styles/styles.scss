@@ -125,3 +125,16 @@ h1.title {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+/* Items */
+
+.item-card {
+	position: relative;
+}
+
+.item-card-options {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #535658;
+}

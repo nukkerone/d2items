@@ -6,6 +6,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
 
 export default function Uniques({ uniqueitems }) {
   let miniSearch = new MiniSearch({
@@ -36,6 +37,18 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
+
+  const popover = ({ item, isAdded }) => {
+    return <Popover>
+    <Popover.Body>
+    <ul class="list-group">
+      <li class="list-group-item"><a href="#">Add to Holy Grail</a></li>
+      <li class="list-group-item"><a href="#">Remove from Holy Grail</a></li>
+      <li class="list-group-item"><a href="#">See details</a></li>
+    </ul>
+    </Popover.Body>
+  </Popover>
+  }
   
   return (
     <div className="container container-bg container-uniques">
@@ -68,8 +81,12 @@ export default function Uniques({ uniqueitems }) {
             items={items}
             render={({ data: item }) => {
             return <div key={item._id} className="grid-item">
-              <div className="card mb-3">
+              <div className="card mb-3 item-card">
                 <div className="card-body">
+
+                  <OverlayTrigger trigger="click" rootClose placement="auto" overlay={popover}>
+                    <Button variant="transparent" className="item-card-options">Opts</Button>
+                  </OverlayTrigger>
 
                   <Image
                     src={'https://diablo2.io' + item.image.src}
