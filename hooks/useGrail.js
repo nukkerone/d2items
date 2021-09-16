@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-function useGrail(category) {
+function useGrail(defaultCategory) {
   const [grail, setGrail] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function useGrail(category) {
     }
   }
 
-  const addToGrail = async (item) => {
+  const addToGrail = async (item, category = defaultCategory) => {
     const response = await fetch('/api/user/grail', {
       method: 'POST',
       headers: {
@@ -39,7 +39,7 @@ function useGrail(category) {
     return false;
   }
 
-  const removeFromGrail = async (item) => {
+  const removeFromGrail = async (item, category = defaultCategory) => {
     const response = await fetch('/api/user/grail', {
       method: 'DELETE',
       headers: {

@@ -9,10 +9,11 @@ import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import useGrail from '../../hooks/useGrail';
-import { Dropdown } from 'react-bootstrap';
 import UniqueItemCard from '../../components/unique-item-card';
+import RunewordItemCard from '../../components/runeword-item-card';
+import SetItemCard from '../../components/set-item-card';
 
-export default function Grail({ uniqueitems }) {
+export default function Grail({ uniqueItems, runewordItems, setItems }) {
   let miniSearch = new MiniSearch({
     idField: '_id',
     fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
@@ -23,34 +24,66 @@ export default function Grail({ uniqueitems }) {
   });
 
   const [session, setSession] = useState(null);
-  const [items, setItems] = useState(uniqueitems);
+  const [uniqueitems, setUniqueItems] = useState(uniqueItems);
+  const [runeworditems, setRunewordItems] = useState(runewordItems);
+  const [setitems, setSetItems] = useState(setItems);
   const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('unique');
 
   useEffect(function () {
-    /* getSession().then((session) => {
+    getSession().then((session) => {
       if (session) {
         setSession(session);
-        fetchGrail();
+        /* fetchGrail(); */
       } else {
         setSession(null);
       }
-    }); */
-    miniSearch.addAll(uniqueitems);
+    });
+    /* miniSearch.addAll(uniqueitems); */
   }, []);
 
   const searchHandler = (e) => {
     if (e.target.value) {
       const results = miniSearch.search(e.target.value).map(i => i.id);
       const i = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
-      setItems(i);
+      setUniqueItems(i);
     } else {
-      setItems(uniqueitems);
+      setUniqueItems(uniqueitems);
     }
   };
 
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
+  
+  const removeUniqueFromGrail = async (item) => {
+    const success = await removeFromGrail(item, 'unique');
+    if (success) {
+      const index = uniqueitems.findIndex(u => u.slug === item.slug);
+      let modified = [...uniqueitems];
+      modified.splice(index, 1);
+      setUniqueItems(modified);
+    }
+  }
+
+  const removeRunewordFromGrail = async (item) => {
+    const success = await removeFromGrail(item, 'runeword');
+    if (success) {
+      const index = runeworditems.findIndex(u => u.slug === item.slug);
+      let modified = [...runeworditems];
+      modified.splice(index, 1);
+      setRunewordItems(modified);
+    }
+  }
+
+  const removeSetitemFromGrail = async (item) => {
+    const success = await removeFromGrail(item, 'set-item');
+    if (success) {
+      const index = setitems.findIndex(u => u.slug === item.slug);
+      let modified = [...setitems];
+      modified.splice(index, 1);
+      setSetItems(modified);
+    }
+  }
 
   return (
     <div className="container container-bg container-uniques">
@@ -81,15 +114,45 @@ export default function Grail({ uniqueitems }) {
         <h3>Unique items</h3>
         <div className="row grid">
           <CustomMasonry
-            items={items}
+            items={uniqueitems}
             render={({ data: item }) => {
               return <UniqueItemCard
                 item={item}
                 key={item._id}
                 session={session}
                 inGrail={true}
-                removeFromGrail={removeFromGrail}
+                removeFromGrail={() => removeUniqueFromGrail(item)}
               ></UniqueItemCard>
+            }}></CustomMasonry>
+        </div>
+
+        <h3>Runeword items</h3>
+        <div className="row grid">
+          <CustomMasonry
+            items={runeworditems}
+            render={({ data: item }) => {
+              return <RunewordItemCard
+                item={item}
+                key={item._id}
+                session={session}
+                inGrail={true}
+                removeFromGrail={() => removeRunewordFromGrail(item)}
+              ></RunewordItemCard>
+            }}></CustomMasonry>
+        </div>
+
+        <h3>Set items</h3>
+        <div className="row grid">
+          <CustomMasonry
+            items={setitems}
+            render={({ data: item }) => {
+              return <SetItemCard
+                item={item}
+                key={item._id}
+                session={session}
+                inGrail={true}
+                removeFromGrail={() => removeSetitemFromGrail(item)}
+              ></SetItemCard>
             }}></CustomMasonry>
         </div>
 
@@ -121,9 +184,9 @@ export async function getServerSideProps({ req, res }) {
 
     return {
       props: {
-        uniqueitems: JSON.parse(JSON.stringify(uniqueGrailItems)),
-        runewords: JSON.parse(JSON.stringify(runewordGrailItems)),
-        setitems: JSON.parse(JSON.stringify(setitemGrailItems)),
+        uniqueItems: JSON.parse(JSON.stringify(uniqueGrailItems)),
+        runewordItems: JSON.parse(JSON.stringify(runewordGrailItems)),
+        setItems: JSON.parse(JSON.stringify(setitemGrailItems)),
       },
     }
   }

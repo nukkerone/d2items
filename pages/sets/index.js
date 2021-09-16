@@ -100,7 +100,7 @@ export default function Sets({ setitems }) {
                   session={session}
                   inGrail={(grail.findIndex((grailItem) => grailItem.category === 'set-item' && grailItem.slug === item.slug) >= 0)}
                   addToGrail={addToGrail}
-                  addToGrail={removeFromGrail}
+                  removeFromGrail={removeFromGrail}
                 ></SetItemCard>
             }}></CustomMasonry>
         </div>
