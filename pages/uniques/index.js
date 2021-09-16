@@ -1,12 +1,16 @@
-import { useEffect, useMemo, useState, useRef} from 'react';
+import { useEffect, useMemo, useState, useRef, forwardRef} from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
+import useSWR from 'swr';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
-import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function Uniques({ uniqueitems }) {
   let miniSearch = new MiniSearch({
@@ -18,9 +22,18 @@ export default function Uniques({ uniqueitems }) {
     }
   });
 
+  const [session, setSession] = useState(null);
   const [items, setItems] = useState(uniqueitems);
+  const { grail, error } = useSWR('/api/user/grail', fetcher);
 
-  useEffect(function() {    
+  useEffect(function () {
+    getSession().then((session) => {
+      if (session) {
+        setSession(session);
+      } else {
+        setSession(null);
+      }
+    });
     miniSearch.addAll(uniqueitems);
   }, []);
 
@@ -37,19 +50,27 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
-
-  const popover = ({ item, isAdded }) => {
-    return <Popover>
-    <Popover.Body>
-    <ul class="list-group">
-      <li class="list-group-item"><a href="#">Add to Holy Grail</a></li>
-      <li class="list-group-item"><a href="#">Remove from Holy Grail</a></li>
-      <li class="list-group-item"><a href="#">See details</a></li>
-    </ul>
-    </Popover.Body>
-  </Popover>
-  }
   
+  const addToGrail = async (item) => {
+    const response = await fetch('/api/user/grail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ category: 'unique', slug: item.slug }) // body data type must match "Content-Type" header
+    });
+  }
+
+  const removeFromGrail = async (item) => {
+    const response = await fetch('/api/user/grail', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ category: 'unique', slug: item.slug }) // body data type must match "Content-Type" header
+    });
+  }
+
   return (
     <div className="container container-bg container-uniques">
       <Head>
@@ -84,9 +105,21 @@ export default function Uniques({ uniqueitems }) {
               <div className="card mb-3 item-card">
                 <div className="card-body">
 
-                  <OverlayTrigger trigger="click" rootClose placement="auto" overlay={popover}>
-                    <Button variant="transparent" className="item-card-options">Opts</Button>
-                  </OverlayTrigger>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="transparent" className="item-card-options">
+                     Opts
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      { session &&
+                        <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+                      }
+                      {session &&
+                        <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
+                      }
+                      <Dropdown.Item><Link href={'/uniques/' + item.slug}>View Details</Link></Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
 
                   <Image
                     src={'https://diablo2.io' + item.image.src}
