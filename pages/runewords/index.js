@@ -2,35 +2,48 @@ import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
+import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import useGrail from '../../hooks/useGrail';
+import { Dropdown } from 'react-bootstrap';
 
 export default function Runewords({ runewords }) {
-  let miniSearch;
+  let miniSearch = new MiniSearch({
+    idField: '_id',
+    fields: ['name', 'level', 'sockets', 'runeList', 'itemsToInsertTo', 'props'], // fields to index for full-text search
+    storeFields: ['name'], // fields to return with search results
+    searchOptions: {
+      prefix: true,
+    },
+    extractField: (document, fieldName) => {
+      switch (fieldName) {
+        case 'runeList':
+          return document[fieldName]?.map(insertProp => insertProp.rune).join(' ');
+        case 'itemsToInsertTo':
+          return document[fieldName]?.join(' ');
+        case 'props':
+          return document[fieldName]?.join(' ');
+        default:
+          return document[fieldName];
+      }
+    }
+  });
 
-  const [items, setRunewords] = useState(runewords)
+  const [session, setSession] = useState(null);
+  const [items, setRunewords] = useState(runewords);
+  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('runeword');
 
   useEffect(() => {
-    miniSearch = new MiniSearch({
-      idField: '_id',
-      fields: ['name', 'level', 'sockets', 'runeList', 'itemsToInsertTo', 'props'], // fields to index for full-text search
-      storeFields: ['name'], // fields to return with search results
-      searchOptions: {
-        prefix: true,
-      },
-      extractField: (document, fieldName) => {
-        switch (fieldName) {
-          case 'runeList':
-            return document[fieldName]?.map(insertProp => insertProp.rune).join(' ');
-          case 'itemsToInsertTo':
-            return document[fieldName]?.join(' ');
-          case 'props':
-            return document[fieldName]?.join(' ');
-          default:
-            return document[fieldName];
-        }
+    getSession().then((session) => {
+      if (session) {
+        setSession(session);
+        fetchGrail();
+      } else {
+        setSession(null);
       }
     });
 
@@ -82,8 +95,24 @@ export default function Runewords({ runewords }) {
             items={items}
             render={({ data: item }) => {
               return <div key={item._id} className="grid-item">
-                <div className="card mb-3">
+                <div className="card mb-3 item-card">
                   <div className="card-body">
+                    <Dropdown>
+                      <Dropdown.Toggle variant="transparent" className="item-card-options">
+                        Opts
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) < 0) &&
+                          <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+                        }
+                        {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) >= 0) &&
+                          <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
+                        }
+                        <Dropdown.Item><Link href={'/runewords/' + item.slug}>View Details</Link></Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+
                     <h2>{item.name}</h2>
                     <h3>Patch {item.patch} Runeword</h3>
 

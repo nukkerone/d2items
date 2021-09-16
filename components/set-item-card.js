@@ -1,11 +1,28 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Dropdown } from 'react-bootstrap';
 
-function SetItemCard({ item }) {
+function SetItemCard({ item, session, inGrail, addToGrail, removeFromGrail }) {
   return (
     <div key={item._id} className="grid-item">
-      <div className="card mb-3">
+      <div className="card mb-3 item-card">
         <div className="card-body">
+          <Dropdown>
+            <Dropdown.Toggle variant="transparent" className="item-card-options">
+              Opts
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {session && !inGrail &&
+                <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+              }
+              {session && inGrail &&
+                <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
+              }
+              <Dropdown.Item><Link href={'/sets/' + item.slug}>View Details</Link></Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           
           <Image
             src={'https://diablo2.io' + item.image.src}
@@ -28,7 +45,7 @@ function SetItemCard({ item }) {
                 return null;
               }
               // We avoid the following fields
-              if (['_id', 'image', 'name', 'tier', 'base', 'setTitle', 'setStats', 'only'].indexOf(key) >= 0) {
+              if (['_id', 'slug', 'image', 'name', 'tier', 'base', 'setTitle', 'setStats', 'only'].indexOf(key) >= 0) {
                 return null;
               }
               // We print the stats 

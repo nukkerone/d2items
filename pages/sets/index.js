@@ -1,35 +1,46 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
+import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import SetItemCard from '../../components/set-item-card';
 import SetRigCard from '../../components/set-rig-card';
+import useGrail from '../../hooks/useGrail';
 
 export default function Sets({ setitems }) {
-  let miniSearch;
+  let miniSearch = new MiniSearch({
+    idField: '_id',
+    fields: ['name', 'tier', 'setItems', 'partialSetProps', 'fullSetProps', 'base', 'stats', 'props', 'setTitle', 'only'], // fields to index for full-text search
+    storeFields: ['name'], // fields to return with search results
+    searchOptions: {
+      prefix: true,
+    },
+    extractField: (document, fieldName) => {
+      switch (fieldName) {
+        case 'setStats':
+          return document[fieldName]?.map(setStat => setStat.prop).join(' ');
+        case 'setItems':
+          return document[fieldName]?.map(setStat => setStat.item + ' ' + setStat.type).join(' ');
+        default:
+          return document[fieldName];
+      }
+    }
+  });
 
-  const [items, setItems] = useState(setitems)
+  const [session, setSession] = useState(null);
+  const [items, setItems] = useState(setitems);
+  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('set-item');
 
   useEffect(() => {
-    miniSearch = new MiniSearch({
-      idField: '_id',
-      fields: ['name', 'tier', 'setItems', 'partialSetProps', 'fullSetProps', 'base', 'stats', 'props', 'setTitle', 'only'], // fields to index for full-text search
-      storeFields: ['name'], // fields to return with search results
-      searchOptions: {
-        prefix: true,
-      },
-      extractField: (document, fieldName) => {
-        switch (fieldName) {
-          case 'setStats':
-            return document[fieldName]?.map(setStat => setStat.prop).join(' ');
-          case 'setItems':
-            return document[fieldName]?.map(setStat => setStat.item + ' ' + setStat.type).join(' ');
-          default:
-            return document[fieldName];
-        }
+    getSession().then((session) => {
+      if (session) {
+        setSession(session);
+        fetchGrail();
+      } else {
+        setSession(null);
       }
     });
 
@@ -83,7 +94,14 @@ export default function Sets({ setitems }) {
               return item.tier === 'Full Set' ?
                 <SetRigCard item={item} key={item._id}></SetRigCard>
                 :
-                <SetItemCard item={item} key={item._id}></SetItemCard>
+                <SetItemCard
+                  item={item}
+                  key={item._id}
+                  session={session}
+                  inGrail={(grail.findIndex((grailItem) => grailItem.category === 'set-item' && grailItem.slug === item.slug) >= 0)}
+                  addToGrail={addToGrail}
+                  addToGrail={removeFromGrail}
+                ></SetItemCard>
             }}></CustomMasonry>
         </div>
 
