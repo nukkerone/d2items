@@ -4,11 +4,13 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import useSWR from 'swr';
+import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import { Dropdown } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -24,12 +26,13 @@ export default function Uniques({ uniqueitems }) {
 
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(uniqueitems);
-  const { grail, error } = useSWR('/api/user/grail', fetcher);
+  const [grail, setGrail] = useState([]);
 
   useEffect(function () {
     getSession().then((session) => {
       if (session) {
         setSession(session);
+        fechtGrail();
       } else {
         setSession(null);
       }
@@ -50,6 +53,21 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
+
+  const fechtGrail = async () => {
+    const response = await fetch('/api/user/grail', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+    if (response && response.ok) {
+      const body = await response.json();
+      setGrail(body);
+      console.log('Grail ', body);
+    }
+
+  }
   
   const addToGrail = async (item) => {
     const response = await fetch('/api/user/grail', {
@@ -59,6 +77,11 @@ export default function Uniques({ uniqueitems }) {
       },
       body: JSON.stringify({ category: 'unique', slug: item.slug }) // body data type must match "Content-Type" header
     });
+    if (response && response.ok) {
+      const body = await response.json();
+      setGrail(body);
+      toast.success('Holy grail item added');
+    }
   }
 
   const removeFromGrail = async (item) => {
@@ -69,6 +92,11 @@ export default function Uniques({ uniqueitems }) {
       },
       body: JSON.stringify({ category: 'unique', slug: item.slug }) // body data type must match "Content-Type" header
     });
+    if (response && response.ok) {
+      const body = await response.json();
+      setGrail(body);
+      toast.success('Holy grail item remove');
+    }
   }
 
   return (
@@ -111,10 +139,10 @@ export default function Uniques({ uniqueitems }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      { session &&
+                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) < 0) &&
                         <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
                       }
-                      {session &&
+                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) >= 0) &&
                         <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
                       }
                       <Dropdown.Item><Link href={'/uniques/' + item.slug}>View Details</Link></Dropdown.Item>
