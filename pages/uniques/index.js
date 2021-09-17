@@ -8,6 +8,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import GrailItemModal from '../../components/grail-item-modal';
 import useGrail from '../../hooks/useGrail';
 import { Dropdown } from 'react-bootstrap';
 
@@ -24,6 +25,7 @@ export default function Uniques({ uniqueitems }) {
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(uniqueitems);
   const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('unique');
+  const [grailItem, setGrailItem] = useState(null);
 
   useEffect(function () {
     getSession().then((session) => {
@@ -50,6 +52,10 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
+  
+  const openGrailModal = () => {
+
+  }
 
   return (
     <div className="container container-bg container-uniques">
@@ -77,6 +83,8 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
+        <GrailItemModal type="unique" item={grailItem} onHide={() => setGrailItem(null)}></GrailItemModal>
+
         <div className="row grid">
           <CustomMasonry
             items={items}
@@ -92,7 +100,7 @@ export default function Uniques({ uniqueitems }) {
 
                     <Dropdown.Menu>
                       { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) < 0) &&
-                        <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+                        <Dropdown.Item><a href="#" onClick={() => setGrailItem(item)}>Add to Holy Grail</a></Dropdown.Item>
                       }
                       { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) >= 0) &&
                         <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
