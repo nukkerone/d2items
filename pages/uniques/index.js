@@ -83,7 +83,7 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <GrailItemModal type="unique" item={grailItem} onHide={() => setGrailItem(null)}></GrailItemModal>
+        <GrailItemModal category="unique" item={grailItem} onHide={() => setGrailItem(null)}></GrailItemModal>
 
         <div className="row grid">
           <CustomMasonry

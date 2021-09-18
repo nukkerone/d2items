@@ -28,19 +28,17 @@ function CustomMasonry({ items, render }) {
   const resizeObserver = useResizeObserver(positioner);
 
   return (
-    <div>
-      <MasonryScroller
-        positioner={positioner}
-        resizeObserver={resizeObserver}
-        containerRef={containerRef}
-        items={items}
-        height={windowHeight}
-        offset={offset}
-        overscanBy={6}
-        columnGutter={16}
-        columnWidth={220}
-        render={render}></MasonryScroller>
-    </div>
+    <MasonryScroller
+      positioner={positioner}
+      resizeObserver={resizeObserver}
+      containerRef={containerRef}
+      items={items}
+      height={windowHeight}
+      offset={offset}
+      overscanBy={6}
+      columnGutter={16}
+      columnWidth={220}
+      render={render}></MasonryScroller>
   )
 }
 
