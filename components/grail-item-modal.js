@@ -1,3 +1,4 @@
+import { hide } from '@popperjs/core';
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
@@ -53,8 +54,13 @@ function GrailItemModal({ category, item, onHide }) {
     return false;
   }
 
+  const hide = () => {
+    setGrailItem(null);
+    if (onHide) { onHide() }
+  }
+
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onExited={hide}>
       <Modal.Body>
         { !loaded &&
           <p>Loading</p>
@@ -63,13 +69,14 @@ function GrailItemModal({ category, item, onHide }) {
           <form onSubmit={(e) => save(e, category, grailItem.slug)} id="grail-item-form">
             <div className="mb-3">
               <label htmlFor="character" className="form-label">Character</label>
-              <select class="form-select" name="character" id="character" aria-label="Character who found it">
-                <option value="sorceress" selected={grailItem?.character === 'sorceress' ? true : false}>Sorceress</option>
-                <option value="barbarian" selected={grailItem?.character === 'barbarian' ? true : false}>Barbarian</option>
-                <option value="assasain" selected={grailItem?.character === 'assasain' ? true : false}>Assasain</option>
-                <option value="druid" selected={grailItem?.character === 'druid' ? true : false}>Druid</option>
-                <option value="paladin" selected={grailItem?.character === 'paladin' ? true : false}>Paladin</option>
-                <option value="amazon" selected={grailItem?.character === 'amazon' ? true : false}>Amazon</option>
+              <select className="form-select" name="character" id="character" aria-label="Character who found it"
+                defaultValue={grailItem?.character}>
+                <option value="sorceress">Sorceress</option>
+                <option value="barbarian">Barbarian</option>
+                <option value="assasain">Assasain</option>
+                <option value="druid">Druid</option>
+                <option value="paladin">Paladin</option>
+                <option value="amazon">Amazon</option>
               </select>
             </div>
             <div className="mb-3">
