@@ -167,8 +167,8 @@ export async function getServerSideProps({ req, res }) {
   const session = await getSession({ req });
   if (session) {
     const { db } = await connectToDatabase()
-    const user = await db.collection('users').findOne({ email: session.user.email });
-    const grail = user.grail;
+    let grail = await db.collection('grail').findOne({ email: session.user.email });
+    grail = grail?.items ?? [];
     
     const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
     const uniqueGrailSlugs = grail.filter(g => g.category === 'unique').map(i => i.slug);

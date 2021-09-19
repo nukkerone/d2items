@@ -13,10 +13,10 @@ const get = async (req, res) => {
   if (session && session.user) {
     const email = session.user.email;
     const { db } = await connectToDatabase();
-    const user = await db.collection('users').findOne({ email });
-    const [type, slug] = req.query.gid;
-    const grailItem = await db.collection('grailitems').findOne({ email: user.email, type, slug });
-    console.log('Grail item', grailItem);
+    const [category, slug] = req.query.gid;
+    let grail = await db.collection('grail').findOne({ email });
+    grail = grail?.items ?? [];
+    const grailItem = grail.find(g => g.category === category && g.slug === slug);
 
     return res.status(200).json(grailItem ?? 'null');
   } else {

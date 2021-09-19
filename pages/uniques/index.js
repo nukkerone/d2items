@@ -99,10 +99,13 @@ export default function Uniques({ uniqueitems }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) < 0) &&
+                      { session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) < 0) &&
                         <Dropdown.Item><a href="#" onClick={() => setGrailItem(item)}>Add to Holy Grail</a></Dropdown.Item>
                       }
-                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) >= 0) &&
+                      {session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) >= 0) &&
+                        <Dropdown.Item><a href="#" onClick={() => setGrailItem(item)}>Edit Holy Grail Item</a></Dropdown.Item>
+                      }
+                      { session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) >= 0) &&
                         <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
                       }
                       <Dropdown.Item><Link href={'/uniques/' + item.slug}>View Details</Link></Dropdown.Item>
