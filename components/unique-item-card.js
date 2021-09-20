@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 
-function UniqueItemCard({ item, session, inGrail, addToGrail, removeFromGrail }) {
+function UniqueItemCard({ item, session, inGrail, editInGrail, removeFromGrail }) {
   return (
     <div key={item._id} className="grid-item">
       <div className="card mb-3 item-card">
@@ -16,6 +16,9 @@ function UniqueItemCard({ item, session, inGrail, addToGrail, removeFromGrail })
             <Dropdown.Menu>
               {session && !inGrail &&
                 <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+              }
+              {session && inGrail &&
+                <Dropdown.Item><a href="#" onClick={() => editInGrail(item)}>Edit Item in Holy Grail</a></Dropdown.Item>
               }
               {session && inGrail &&
                 <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>

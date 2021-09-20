@@ -71,7 +71,7 @@ const remove = async (req, res) => {
     const index = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug);
     if (index >= 0) {
       grail.splice(index, 1);
-      await db.collection('users').updateOne({ email }, [
+      await db.collection('grail').updateOne({ email }, [
         { $set: { items: grail } }
       ]);
     }

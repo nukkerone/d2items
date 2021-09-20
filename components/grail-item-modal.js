@@ -1,4 +1,3 @@
-import { hide } from '@popperjs/core';
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
@@ -66,7 +65,7 @@ function GrailItemModal({ category, item, onHide }) {
           <p>Loading</p>
         }
         { loaded &&
-          <form onSubmit={(e) => save(e, category, grailItem.slug)} id="grail-item-form">
+          <form onSubmit={(e) => save(e, category, item.slug)} id="grail-item-form">
             <div className="mb-3">
               <label htmlFor="character" className="form-label">Character</label>
               <select className="form-select" name="character" id="character" aria-label="Character who found it"

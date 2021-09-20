@@ -52,10 +52,6 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
-  
-  const openGrailModal = () => {
-
-  }
 
   return (
     <div className="container container-bg container-uniques">
@@ -83,7 +79,7 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <GrailItemModal category="unique" item={grailItem} onHide={() => setGrailItem(null)}></GrailItemModal>
+        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); fetchGrail()}}></GrailItemModal>
 
         <div className="row grid">
           <CustomMasonry
