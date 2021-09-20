@@ -52,10 +52,6 @@ export default function Uniques({ uniqueitems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
-  
-  const openGrailModal = () => {
-
-  }
 
   return (
     <div className="container container-bg container-uniques">
@@ -83,7 +79,7 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <GrailItemModal type="unique" item={grailItem} onHide={() => setGrailItem(null)}></GrailItemModal>
+        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); fetchGrail()}}></GrailItemModal>
 
         <div className="row grid">
           <CustomMasonry
@@ -99,13 +95,16 @@ export default function Uniques({ uniqueitems }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) < 0) &&
-                        <Dropdown.Item><a href="#" onClick={() => setGrailItem(item)}>Add to Holy Grail</a></Dropdown.Item>
+                      { session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) < 0) &&
+                        <Dropdown.Item onClick={() => setGrailItem(item)}>Add to Holy Grail</Dropdown.Item>
                       }
-                      { session && (grail.findIndex((grailItem) => grailItem.category === 'unique' && grailItem.slug === item.slug) >= 0) &&
-                        <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
+                      {session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) >= 0) &&
+                        <Dropdown.Item onClick={() => setGrailItem(item)}>Edit Holy Grail Item</Dropdown.Item>
                       }
-                      <Dropdown.Item><Link href={'/uniques/' + item.slug}>View Details</Link></Dropdown.Item>
+                      { session && (grail.findIndex((g) => g.category === 'unique' && g.slug === item.slug) >= 0) &&
+                        <Dropdown.Item onClick={() => removeFromGrail(item)}>Remove from Holy Grail</Dropdown.Item>
+                      }
+                      <Dropdown.Item as={Link} href={'/uniques/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
 

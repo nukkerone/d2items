@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState, useRef, forwardRef } from 'react';
 import { debounce } from 'lodash';
 import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
 import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
@@ -12,6 +10,7 @@ import useGrail from '../../hooks/useGrail';
 import UniqueItemCard from '../../components/unique-item-card';
 import RunewordItemCard from '../../components/runeword-item-card';
 import SetItemCard from '../../components/set-item-card';
+import GrailItemModal from '../../components/grail-item-modal';
 
 export default function Grail({ uniqueItems, runewordItems, setItems }) {
   let miniSearch = new MiniSearch({
@@ -28,6 +27,9 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
   const [runeworditems, setRunewordItems] = useState(runewordItems);
   const [setitems, setSetItems] = useState(setItems);
   const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('unique');
+  const [uniqueGrailItem, setUniqueGrailItem] = useState(null);
+  const [runewordGrailItem, setRunewordGrailItem] = useState(null);
+  const [setItemGrailItem, setSetItemGrailItem] = useState(null);
 
   useEffect(function () {
     getSession().then((session) => {
@@ -107,6 +109,10 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
 
         <UpperNav></UpperNav>
 
+        <GrailItemModal category="unique" item={uniqueGrailItem} onHide={() => setUniqueGrailItem(null)}></GrailItemModal>
+        <GrailItemModal category="runeword" item={runewordGrailItem} onHide={() => setRunewordGrailItem(null)}></GrailItemModal>
+        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => setSetItemGrailItem(null)}></GrailItemModal>
+
         <h1 className="title">
           Diablo 2 Resurrected Holy Grail
         </h1>
@@ -121,6 +127,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
                 key={item._id}
                 session={session}
                 inGrail={true}
+                editInGrail={() => setUniqueGrailItem(item)}
                 removeFromGrail={() => removeUniqueFromGrail(item)}
               ></UniqueItemCard>
             }}></CustomMasonry>
@@ -136,6 +143,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
                 key={item._id}
                 session={session}
                 inGrail={true}
+                editInGrail={() => setRunewordGrailItem(item)}
                 removeFromGrail={() => removeRunewordFromGrail(item)}
               ></RunewordItemCard>
             }}></CustomMasonry>
@@ -151,6 +159,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
                 key={item._id}
                 session={session}
                 inGrail={true}
+                editInGrail={() => setSetItemGrailItem(item)}
                 removeFromGrail={() => removeSetitemFromGrail(item)}
               ></SetItemCard>
             }}></CustomMasonry>
@@ -167,8 +176,8 @@ export async function getServerSideProps({ req, res }) {
   const session = await getSession({ req });
   if (session) {
     const { db } = await connectToDatabase()
-    const user = await db.collection('users').findOne({ email: session.user.email });
-    const grail = user.grail;
+    let grail = await db.collection('grail').findOne({ email: session.user.email });
+    grail = grail?.items ?? [];
     
     const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
     const uniqueGrailSlugs = grail.filter(g => g.category === 'unique').map(i => i.slug);

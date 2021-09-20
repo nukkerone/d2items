@@ -9,6 +9,7 @@ import CustomMasonry from '../../components/custom-masonry';
 import SetItemCard from '../../components/set-item-card';
 import SetRigCard from '../../components/set-rig-card';
 import useGrail from '../../hooks/useGrail';
+import GrailItemModal from '../../components/grail-item-modal';
 
 export default function Sets({ setitems }) {
   let miniSearch = new MiniSearch({
@@ -33,6 +34,7 @@ export default function Sets({ setitems }) {
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(setitems);
   const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('set-item');
+  const [setItemGrailItem, setSetItemGrailItem] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
@@ -83,6 +85,8 @@ export default function Sets({ setitems }) {
 
         <UpperNav></UpperNav>
 
+        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => { setSetItemGrailItem(null); fetchGrail(); }}></GrailItemModal>
+
         <h1 className="title">
           Diablo 2 Resurrected Sets
         </h1>
@@ -99,7 +103,8 @@ export default function Sets({ setitems }) {
                   key={item._id}
                   session={session}
                   inGrail={(grail.findIndex((grailItem) => grailItem.category === 'set-item' && grailItem.slug === item.slug) >= 0)}
-                  addToGrail={addToGrail}
+                  addToGrail={() => setSetItemGrailItem(item)}
+                  editInGrail={() => setSetItemGrailItem(item)}
                   removeFromGrail={removeFromGrail}
                 ></SetItemCard>
             }}></CustomMasonry>

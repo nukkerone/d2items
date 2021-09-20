@@ -8,6 +8,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import GrailItemModal from '../../components/grail-item-modal';
 import useGrail from '../../hooks/useGrail';
 import { Dropdown } from 'react-bootstrap';
 
@@ -36,6 +37,7 @@ export default function Runewords({ runewords }) {
   const [session, setSession] = useState(null);
   const [items, setRunewords] = useState(runewords);
   const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('runeword');
+  const [grailItem, setGrailItem] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
@@ -86,6 +88,8 @@ export default function Runewords({ runewords }) {
 
         <UpperNav></UpperNav>
 
+        <GrailItemModal category="runeword" item={grailItem} onHide={() => { setGrailItem(null); fetchGrail() }}></GrailItemModal>
+
         <h1 className="title">
           Diablo 2 Resurrected Runewords
         </h1>
@@ -104,12 +108,15 @@ export default function Runewords({ runewords }) {
 
                       <Dropdown.Menu>
                         {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) < 0) &&
-                          <Dropdown.Item><a href="#" onClick={() => addToGrail(item)}>Add to Holy Grail</a></Dropdown.Item>
+                          <Dropdown.Item onClick={() => setGrailItem(item)}>Add to Holy Grail</Dropdown.Item>
+                        }
+                        {session && (grail.findIndex((g) => g.category === 'runeword' && g.slug === item.slug) >= 0) &&
+                          <Dropdown.Item onClick={() => setGrailItem(item)}>Edit Holy Grail Item</Dropdown.Item>
                         }
                         {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) >= 0) &&
-                          <Dropdown.Item><a href="#" onClick={() => removeFromGrail(item)}>Remove from Holy Grail</a></Dropdown.Item>
+                          <Dropdown.Item onClick={() => removeFromGrail(item)}>Remove from Holy Grail</Dropdown.Item>
                         }
-                        <Dropdown.Item><Link href={'/runewords/' + item.slug}>View Details</Link></Dropdown.Item>
+                        <Dropdown.Item as={Link} href={'/runewords/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
 
