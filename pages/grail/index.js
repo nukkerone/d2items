@@ -13,12 +13,52 @@ import SetItemCard from '../../components/set-item-card';
 import GrailItemModal from '../../components/grail-item-modal';
 
 export default function Grail({ uniqueItems, runewordItems, setItems }) {
-  let miniSearch = new MiniSearch({
+  let uniquesMiniSearch = new MiniSearch({
     idField: '_id',
     fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
     storeFields: ['name', 'base'], // fields to return with search results
     searchOptions: {
       prefix: true,
+    }
+  });
+
+  let runewordsMiniSearch = new MiniSearch({
+    idField: '_id',
+    fields: ['name', 'level', 'sockets', 'runeList', 'itemsToInsertTo', 'props'], // fields to index for full-text search
+    storeFields: ['name'], // fields to return with search results
+    searchOptions: {
+      prefix: true,
+    },
+    extractField: (document, fieldName) => {
+      switch (fieldName) {
+        case 'runeList':
+          return document[fieldName]?.map(insertProp => insertProp.rune).join(' ');
+        case 'itemsToInsertTo':
+          return document[fieldName]?.join(' ');
+        case 'props':
+          return document[fieldName]?.join(' ');
+        default:
+          return document[fieldName];
+      }
+    }
+  });
+
+  let setsMiniSearch = new MiniSearch({
+    idField: '_id',
+    fields: ['name', 'tier', 'setItems', 'partialSetProps', 'fullSetProps', 'base', 'stats', 'props', 'setTitle', 'only'], // fields to index for full-text search
+    storeFields: ['name'], // fields to return with search results
+    searchOptions: {
+      prefix: true,
+    },
+    extractField: (document, fieldName) => {
+      switch (fieldName) {
+        case 'setStats':
+          return document[fieldName]?.map(setStat => setStat.prop).join(' ');
+        case 'setItems':
+          return document[fieldName]?.map(setStat => setStat.item + ' ' + setStat.type).join(' ');
+        default:
+          return document[fieldName];
+      }
     }
   });
 
@@ -40,16 +80,29 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
         setSession(null);
       }
     });
-    /* miniSearch.addAll(uniqueitems); */
+    uniquesMiniSearch.addAll(uniqueitems);
+    runewordsMiniSearch.addAll(runeworditems);
+    setsMiniSearch.addAll(setitems);
   }, []);
 
   const searchHandler = (e) => {
     if (e.target.value) {
-      const results = miniSearch.search(e.target.value).map(i => i.id);
+      const results = uniquesMiniSearch.search(e.target.value).map(i => i.id);
       const i = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
       setUniqueItems(i);
+
+      const runewordResults = runewordsMiniSearch.search(e.target.value).map(i => i.id);
+      const j = runeworditems.filter(i => runewordResults.indexOf(i._id) >= 0);
+      setRunewordItems(j);
+
+      const setResults = setsMiniSearch.search(e.target.value).map(i => i.id);
+      const k = setitems.filter(i => setResults.indexOf(i._id) >= 0);
+      setSetItems(k);
+
     } else {
       setUniqueItems(uniqueitems);
+      setRunewordItems(runeworditems);
+      setSetItems(setitems);
     }
   };
 
