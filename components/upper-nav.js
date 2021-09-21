@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/client';
 
 function UpperNav() {
   const router = useRouter();
+
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setSession(session);
+      } else {
+        setSession(null);
+      }
+    });
+  }, [])
 
   return (
     <ul className="item-nav">
@@ -49,6 +62,30 @@ function UpperNav() {
           </a>
         </Link>
       </li>
+      {session && <li>
+        <Link href="/grail">
+          <a className={router.pathname == "/grail" ? "active" : ""}>
+            My Holy Grail
+          </a>
+        </Link>
+      </li>
+      }
+      <li>
+        <Link href="/grail/leaderboard">
+          <a className={router.pathname == "/grail/leaderboard" ? "active" : ""}>
+            Leaderboard
+          </a>
+        </Link>
+      </li>
+      {session && <li>
+        <Link href="/logout">
+          <a>
+            Logout
+          </a>
+        </Link>
+      </li>
+
+      }
     </ul>
   )
 }
