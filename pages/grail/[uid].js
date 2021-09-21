@@ -12,7 +12,7 @@ import RunewordItemCard from '../../components/runeword-item-card';
 import SetItemCard from '../../components/set-item-card';
 import GrailItemModal from '../../components/grail-item-modal';
 
-export default function Grail({ uniqueItems, runewordItems, setItems }) {
+export default function Grail({ username, uniqueItems, runewordItems, setItems }) {
   let uniquesMiniSearch = new MiniSearch({
     idField: '_id',
     fields: ['name', 'tier', 'base', 'prop1', 'prop2', 'prop3', 'prop4', 'prop5', 'prop6', 'prop7', 'prop8', 'prop9', 'prop10', 'prop11', 'prop12', 'only'], // fields to index for full-text search
@@ -109,7 +109,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
   const debouncedSearchHandler = useMemo(
     () => debounce(searchHandler, 300)
     , []);
-  
+
   const removeUniqueFromGrail = async (item) => {
     const success = await removeFromGrail(item, 'unique');
     if (success) {
@@ -167,7 +167,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
         <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => setSetItemGrailItem(null)}></GrailItemModal>
 
         <h1 className="title">
-          Diablo 2 Resurrected Holy Grail
+          { username } Holy Grail
         </h1>
 
         <h3>Unique items</h3>
@@ -225,14 +225,14 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
 }
 
 
-export async function getServerSideProps({ req, res }) {
-  const session = await getSession({ req });
-  console.log('Session ', session);
-  if (session) {
-    const { db } = await connectToDatabase()
-    let grail = await db.collection('grail').findOne({ email: session.user.email });
+export async function getServerSideProps({ req, res, params: { uid } }) {
+  const { db } = await connectToDatabase();
+  console.log('Req ', uid);
+  const user = await db.collection('users').findOne({ username: uid });
+  if (user) {
+    let grail = await db.collection('grail').findOne({ email: user.email });
     grail = grail?.items ?? [];
-    
+
     const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
     const uniqueGrailSlugs = grail.filter(g => g.category === 'unique').map(i => i.slug);
     const uniqueGrailItems = uniqueitems.filter(u => uniqueGrailSlugs.indexOf(u.slug) >= 0);
@@ -247,6 +247,7 @@ export async function getServerSideProps({ req, res }) {
 
     return {
       props: {
+        username: uid,
         uniqueItems: JSON.parse(JSON.stringify(uniqueGrailItems)),
         runewordItems: JSON.parse(JSON.stringify(runewordGrailItems)),
         setItems: JSON.parse(JSON.stringify(setitemGrailItems)),
@@ -254,9 +255,11 @@ export async function getServerSideProps({ req, res }) {
     }
   } else {
     return {
-      redirect: {
-        destination: '/auth/signin',
-        permanent: false,
+      props: {
+        username: null,
+        uniqueItems: [],
+        runewordItems: [],
+        setItems: [],
       },
     }
   }

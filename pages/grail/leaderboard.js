@@ -3,6 +3,7 @@ import Head from 'next/head';
 import UpperNav from '../../components/upper-nav';
 import { Table, Button } from 'react-bootstrap';
 import useSWR from 'swr';
+import Link from 'next/link';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -41,13 +42,19 @@ export default function GrailLeaderboard({ }) {
               <th>#</th>
               <th>User</th>
               <th>Items</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {data?.leaderboard.map((l, i) => <tr>
               <td>{i+1}</td>
-              <td>{l.email}</td>
+              <td>{l.username}</td>
               <td>{l.size}/{data.total}</td>
+              <td>
+                {l.username && <Link href={'/grail/' + l.username}>
+                  View Grail
+                </Link>}
+              </td>
             </tr>)}
           </tbody>
         </Table>

@@ -25,7 +25,7 @@ const get = async (req, res) => {
   const leaderboard = await db.collection('grail').aggregate([
     { $unwind: "$items" },
     { $match: { 'items.gameType': gameType } },
-    { $group: { _id: "$_id", email: { '$first': '$email'}, size: { $sum: 1 } } },
+    { $group: { _id: "$_id", username: { '$first': '$username'}, size: { $sum: 1 } } },
     { $sort: { size: 1 } }
   ]).toArray();
 

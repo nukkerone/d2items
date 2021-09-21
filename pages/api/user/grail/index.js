@@ -31,6 +31,7 @@ const post = async (req, res) => {
   if (session && session.user) {
     const email = session.user.email;
     const { db } = await connectToDatabase();
+    const user = await db.collection('users').findOne({ email });
     let grail = await db.collection('grail').findOne({ email });
     grail = grail?.items ?? [];
     const slug = req.body.slug;
@@ -50,7 +51,7 @@ const post = async (req, res) => {
       grail[indexFound] = grailItem;
     }
     await db.collection('grail').updateOne({ email }, [
-      { $set: { items: grail } },
+      { $set: { username: user.username, items: grail } },
     ], { upsert: true });
 
     return res.status(200).json(grailItem);
