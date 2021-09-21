@@ -12,7 +12,7 @@ export default async (req, res) => {
 
 const signup = async (req, res) => {
   const { db } = await connectToDatabase();
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   //Validate
   if (!email || !email.includes('@') || !password) {
@@ -20,12 +20,17 @@ const signup = async (req, res) => {
     return;
   }
 
-  //Check existing
-  const checkExisting = await db.collection('users').findOne({ email: email });
-
-  //Send error response if duplicate user is found
+  //Check existing username
+  let checkExisting = await db.collection('users').findOne({ username });
   if (checkExisting) {
-    res.status(422).json({ message: 'User already exists', error: true });
+    res.status(422).json({ message: 'Username already exists', error: true });
+    return;
+  }
+
+  //Check existing email
+  checkExisting = await db.collection('users').findOne({ email });
+  if (checkExisting) {
+    res.status(422).json({ message: 'Email already exists', error: true });
     return;
   }
 

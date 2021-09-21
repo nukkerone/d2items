@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { signIn, getSession } from 'next-auth/client';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { Button } from 'react-bootstrap';
 
 export default function SignIn() {
   const router = useRouter();
@@ -58,7 +60,11 @@ export default function SignIn() {
         </div>
 
         <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-        <button className="w-100 btn btn-lg btn-link">Sign up</button>
+        <Link href="/auth/signup">
+          <Button variant="link" className="w-100 btn btn-lg">
+            Sign up
+          </Button>
+        </Link>
       </form>
     </main>
   )

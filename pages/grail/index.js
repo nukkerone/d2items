@@ -198,6 +198,13 @@ export async function getServerSideProps({ req, res }) {
         setItems: JSON.parse(JSON.stringify(setitemGrailItems)),
       },
     }
+  } else {
+    return {
+      redirect: {
+        destination: '/auth/signin',
+        permanent: false,
+      },
+    }
   }
   
 }

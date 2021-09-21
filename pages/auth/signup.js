@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { getSession } from 'next-auth/client';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import { data } from 'cheerio/lib/api/attributes';
+import Link from 'next/link';
+import { Button } from 'react-bootstrap';
 
 export default function SignUp() {
   const router = useRouter();
@@ -55,22 +56,31 @@ export default function SignUp() {
         <h1 className="h3 mb-3 fw-normal text-center mb-4">Create an account</h1>
 
         <div className="form-floating">
-          <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" name="email" />
-          <label htmlFor="floatingInput">Email address</label>
+          <input type="text" className="form-control" id="signup-username" placeholder="JohnDoe95" name="username" />
+          <label htmlFor="signup-username">Username</label>
         </div>
 
         <div className="form-floating">
-          <input type="password" className="form-control" id="floatingPassword" placeholder="Password" name="password" />
-          <label htmlFor="floatingPassword">Password</label>
+          <input type="email" className="form-control" id="signup-email" placeholder="name@example.com" name="email" />
+          <label htmlFor="signup-email">Email address</label>
+        </div>
+
+        <div className="form-floating">
+          <input type="password" className="form-control" id="signup-password" placeholder="Password" name="password" />
+          <label htmlFor="signup-password">Password</label>
         </div>
 
         <div className="form-floating mb-4">
-          <input type="password" className="form-control" id="floatingRepeatPassword" placeholder="Password" name="passwordRepeat" />
-          <label htmlFor="floatingRepeatPassword">Repeat Paswword</label>
+          <input type="password" className="form-control" id="signup-password-repeat" placeholder="Password" name="passwordRepeat" />
+          <label htmlFor="signup-password-repeat">Repeat Paswword</label>
         </div>
 
         <button className="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
-        <button className="w-100 btn btn-lg btn-link">Sign in</button>
+        <Link href="/auth/signin">
+          <Button variant="link" className="w-100 btn btn-lg">
+            Sign in
+          </Button>
+        </Link>
       </form>
     </main>
   )

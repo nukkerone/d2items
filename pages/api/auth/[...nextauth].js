@@ -13,7 +13,8 @@ export default NextAuth({
         Providers.Credentials({
             async authorize(credentials) {
                 const { db } = await connectToDatabase();
-                const user = await db.collection('users').findOne({ email: credentials.email });
+                const user = await db.collection('users')
+                    .findOne({ email: credentials.email });
         
                 //Not found - send error res
                 if (!user) {
