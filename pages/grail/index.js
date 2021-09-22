@@ -11,6 +11,9 @@ import UniqueItemCard from '../../components/unique-item-card';
 import RunewordItemCard from '../../components/runeword-item-card';
 import SetItemCard from '../../components/set-item-card';
 import GrailItemModal from '../../components/grail-item-modal';
+import { useRouter } from 'next/router';
+import { Button } from 'react-bootstrap';
+import classNames from 'classnames';
 
 export default function Grail({ uniqueItems, runewordItems, setItems }) {
   let uniquesMiniSearch = new MiniSearch({
@@ -62,7 +65,10 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
     }
   });
 
+  const router = useRouter();
   const [session, setSession] = useState(null);
+  const [character, setCharacter] = useState('sorceress');
+  const [gameType, setGameType] = useState('softcore');
   const [uniqueitems, setUniqueItems] = useState(uniqueItems);
   const [runeworditems, setRunewordItems] = useState(runewordItems);
   const [setitems, setSetItems] = useState(setItems);
@@ -72,10 +78,12 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
   const [setItemGrailItem, setSetItemGrailItem] = useState(null);
 
   useEffect(function () {
+    const { character, gameType } = router.query;
+    setCharacter(character);
+    setGameType(gameType);
     getSession().then((session) => {
       if (session) {
         setSession(session);
-        /* fetchGrail(); */
       } else {
         setSession(null);
       }
@@ -140,6 +148,11 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
     }
   }
 
+  const changeParams = async (gameType, character) => {
+    await router.push(`/grail?gameType=${gameType}&character=${character}`);
+    router.reload();
+  }
+
   return (
     <div className="container container-bg container-uniques">
       <Head>
@@ -169,6 +182,28 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
         <h1 className="title">
           Diablo 2 Resurrected Holy Grail
         </h1>
+
+        <div className="row">
+          <div className="col-sm-4 col-md-2">
+            <select className="form-select mb-3" name="character" id="character" aria-label="Character who found it"
+              value={character} onChange={(e) => { changeParams(gameType, e.currentTarget.value) }}>
+              <option value="sorceress">Sorceress</option>
+              <option value="barbarian">Barbarian</option>
+              <option value="assasain">Assasain</option>
+              <option value="druid">Druid</option>
+              <option value="paladin">Paladin</option>
+              <option value="amazon">Amazon</option>
+            </select>
+          </div>
+          <div className="col-sm-4 col-md-2">
+            <Button className={classNames('mb-3 w-100', { active: gameType === 'softcore' })}
+              onClick={() => changeParams('softcore', character)}>Softcore</Button>
+          </div>
+          <div className="col-sm-4 col-md-2">
+            <Button className={classNames('mb-3 w-100', { active: gameType === 'hardcore' })}
+              onClick={() => changeParams('hardcore', character)}>Hardcore</Button>
+          </div>
+        </div>
 
         <h3>Unique items</h3>
         <div className="row grid">
@@ -225,13 +260,22 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
 }
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, query }) {
   const session = await getSession({ req });
-  console.log('Session ', session);
+  /* console.log('Session ', session); */
   if (session) {
+    if (!query.gameType || !query.character) {
+      return {
+        redirect: {
+          destination: `/grail?gameType=${query.gameType ?? 'softcore'}&character=${query.character ?? 'sorceress'}`,
+          permanent: false,
+        },
+      }
+    }
     const { db } = await connectToDatabase()
     let grail = await db.collection('grail').findOne({ email: session.user.email });
     grail = grail?.items ?? [];
+    grail = grail.filter(g => g.gameType === query.gameType && g.character === query.character);
     
     const uniqueitems = await db.collection('unique_scrapped_normalized').find({}).limit(500).toArray();
     const uniqueGrailSlugs = grail.filter(g => g.category === 'unique').map(i => i.slug);

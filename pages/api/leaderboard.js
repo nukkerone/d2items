@@ -15,7 +15,7 @@ export default async (req, res) => {
  */
 const get = async (req, res) => {
   const { db } = await connectToDatabase();
-  const { gameType } = req.query;
+  const { character, gameType } = req.query;
 
   const totalUniques = await db.collection('unique_scrapped_normalized').find().count();
   const totalRunewordItems = await db.collection('runeword_scrapped_normalized').find().count();
@@ -25,13 +25,16 @@ const get = async (req, res) => {
   const leaderboard = await db.collection('grail').aggregate([
     { $unwind: "$items" },
     { $match: { 'items.gameType': gameType } },
+    { $match: { 'items.character': character } },
     { $group: { _id: "$_id", username: { '$first': '$username'}, size: { $sum: 1 } } },
     { $sort: { size: 1 } }
   ]).toArray();
 
   res.json({
+    character,
+    gameType,
     total,
-    leaderboard
+    leaderboard,
   });
   
 }

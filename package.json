@@ -12,6 +12,7 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.1.0",
     "cheerio": "^1.0.0-rc.10",
+    "classnames": "^2.3.1",
     "lodash": "^4.17.21",
     "masonic": "^3.4.1",
     "minisearch": "^3.0.4",
