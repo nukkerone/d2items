@@ -16,9 +16,9 @@ const get = async (req, res) => {
     const [category, slug] = req.query.gid;
     let grail = await db.collection('grail').findOne({ email });
     grail = grail?.items ?? [];
-    const grailItem = grail.find(g => g.category === category && g.slug === slug);
+    const grailItems = grail.filter(g => g.category === category && g.slug === slug);
 
-    return res.status(200).json(grailItem ?? 'null');
+    return res.status(200).json(grailItems ?? []);
   } else {
     return res.status(401).json('null');
   }

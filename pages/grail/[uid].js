@@ -261,6 +261,15 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
 
 
 export async function getServerSideProps({ req, res, params: { uid }, query }) {
+  if (!query.gameType || !query.character) {
+    return {
+      redirect: {
+        destination: `/grail/${uid}?gameType=${query.gameType ?? 'softcore'}&character=${query.character ?? 'sorceress'}`,
+        permanent: false,
+      },
+    }
+  }
+
   const { db } = await connectToDatabase();
   const user = await db.collection('users').findOne({ username: uid });
   if (user) {

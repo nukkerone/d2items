@@ -43,7 +43,7 @@ const post = async (req, res) => {
     const isEthereal = req.body.isEthereal;
     const difficulty = req.body.difficulty;
     const gameType = req.body.gameType;
-    const indexFound = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug);
+    const indexFound = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug && grailItem.gameType === gameType && grailItem.character === character);
     const grailItem = { category, slug, character, foundAt, magicFind, isPerfect, isEthereal, difficulty, gameType };
     if (indexFound < 0) {
       grail.push(grailItem);
@@ -67,9 +67,11 @@ const remove = async (req, res) => {
     const { db } = await connectToDatabase();
     let grail = await db.collection('grail').findOne({ email });
     grail = grail.items ?? [];
+    const gameType = req.body.gameType;
+    const character = req.body.character;
     const slug = req.body.slug;
     const category = req.body.category;
-    const index = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug);
+    const index = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug && grailItem.gameType === gameType && grailItem.character === character);
     if (index >= 0) {
       grail.splice(index, 1);
       await db.collection('grail').updateOne({ email }, [

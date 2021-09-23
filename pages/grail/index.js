@@ -261,17 +261,17 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
 
 
 export async function getServerSideProps({ req, res, query }) {
-  const session = await getSession({ req });
-  /* console.log('Session ', session); */
-  if (session) {
-    if (!query.gameType || !query.character) {
-      return {
-        redirect: {
-          destination: `/grail?gameType=${query.gameType ?? 'softcore'}&character=${query.character ?? 'sorceress'}`,
-          permanent: false,
-        },
-      }
+  if (!query.gameType || !query.character) {
+    return {
+      redirect: {
+        destination: `/grail?gameType=${query.gameType ?? 'softcore'}&character=${query.character ?? 'sorceress'}`,
+        permanent: false,
+      },
     }
+  }
+
+  const session = await getSession({ req });
+  if (session) {
     const { db } = await connectToDatabase()
     let grail = await db.collection('grail').findOne({ email: session.user.email });
     grail = grail?.items ?? [];
