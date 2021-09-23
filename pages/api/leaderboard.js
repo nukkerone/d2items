@@ -27,7 +27,7 @@ const get = async (req, res) => {
     { $match: { 'items.gameType': gameType } },
     { $match: { 'items.character': character } },
     { $group: { _id: "$_id", username: { '$first': '$username'}, size: { $sum: 1 } } },
-    { $sort: { size: 1 } }
+    { $sort: { size: -1 } }
   ]).toArray();
 
   res.json({

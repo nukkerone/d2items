@@ -91,7 +91,7 @@ export const getStaticProps = async ({ params: { slug } }) => {
 export const getStaticPaths = async () => {
   const { db } = await connectToDatabase();
   let paths = [];
-  const runewordItems = await db.collection('runeword_scrapped_normalized').find({}).limit(3).toArray();
+  const runewordItems = await db.collection('runeword_scrapped_normalized').find({}).limit(500).toArray();
   const runewordItemsSlug = runewordItems.map(i => i.slug);
 
   paths = [...paths, ...runewordItemsSlug.map(s => { return { params: { slug: s } } })];

@@ -67,7 +67,7 @@ export default function GrailLeaderboard({ }) {
             </tr>
           </thead>
           <tbody>
-            {data?.leaderboard.map((l, i) => <tr>
+            {data?.leaderboard.map((l, i) => <tr key={i}>
               <td>{i+1}</td>
               <td>{l.username}</td>
               <td>{l.size}/{data.total}</td>

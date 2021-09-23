@@ -36,6 +36,7 @@ const signup = async (req, res) => {
 
   //Hash password and insert
   const status = await db.collection('users').insertOne({
+    username,
     email,
     password: await hash(password, 12),
   });

@@ -98,7 +98,7 @@ export const getStaticProps = async ({ params: { slug } }) => {
 export const getStaticPaths = async () => {
   const { db } = await connectToDatabase();
   let paths = [];
-  const baseItems = await db.collection('base_scrapped_normalized').find({}).limit(3).toArray();
+  const baseItems = await db.collection('base_scrapped_normalized').find({}).limit(500).toArray();
   const baseItemsSlug = baseItems.map(i => i.slug);
 
   paths = [...paths, ...baseItemsSlug.map(s => { return { params: { slug: s } } })];

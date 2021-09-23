@@ -49,7 +49,7 @@ export const getStaticProps = async ({ params: { slug } }) => {
 export const getStaticPaths = async () => {
   const { db } = await connectToDatabase();
   let paths = [];
-  const sets = await db.collection('set_scrapped_normalized').find({ tier: 'Full Set' }).limit(3).toArray();
+  const sets = await db.collection('set_scrapped_normalized').find({ tier: 'Full Set' }).limit(500).toArray();
   const setItemsSlug = sets.map(i => i.slug);
 
   paths = [...paths, ...setItemsSlug.map(s => { return { params: { slug: s } } })];

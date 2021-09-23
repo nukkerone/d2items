@@ -94,7 +94,7 @@ export const getStaticProps = async ({ params: { slug } }) => {
 export const getStaticPaths = async () => {
   const { db } = await connectToDatabase();
   let paths = [];
-  const recipeItems = await db.collection('recipes_scrapped_normalized').find({}).limit(3).toArray();
+  const recipeItems = await db.collection('recipes_scrapped_normalized').find({}).limit(500).toArray();
   const recipeItemsSlug = recipeItems.map(i => i.slug);
 
   paths = [...paths, ...recipeItemsSlug.map(s => { return { params: { slug: s } } })];
