@@ -45,7 +45,7 @@ export default function SignUp() {
     if (!res && res.error) {
       toast.error('Credentials does not match');
     } else {
-      toast.success('User authenticated');
+      toast.success('User created');
       router.replace('/auth/signin');
     }
   };

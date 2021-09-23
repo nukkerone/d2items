@@ -45,7 +45,17 @@ function GrailItemModal({ category, item, onHide }) {
     const character = formRef.current.character.value;
     const gameType = Array.from(formRef.current.gameType.values()).find(d => d.checked).value;
     const g = grailItems.find(gi => gi.gameType === gameType && gi.character === character);
-    setGrailItem(g ?? { ...defaultItem, ...{ gameType, character } });
+    let newGrailItem;
+    if (existing && !g) {
+      newGrailItem = { ...defaultItem, ...{ gameType, character } };
+    } else if (existing && g) {
+      newGrailItem = { ...g, ...{ gameType, character } };
+    } else if (!existing && !g) {
+      newGrailItem = { ...grailItem, ...{ gameType, character } };
+    } else if (!existing && g) {
+      newGrailItem = { ...g, ...{ gameType, character } };
+    }
+    setGrailItem(newGrailItem);
     setExisting(!!g);
   }
 
@@ -53,7 +63,17 @@ function GrailItemModal({ category, item, onHide }) {
     const character = formRef.current.character.value;
     const gameType = Array.from(formRef.current.gameType.values()).find(d => d.checked).value;
     const g = grailItems.find(gi => gi.gameType === gameType && gi.character === character);
-    setGrailItem(g ?? { ...defaultItem, ...{ gameType, character } });
+    let newGrailItem;
+    if (existing && !g) {
+      newGrailItem = { ...defaultItem, ...{ gameType, character } };
+    } else if (existing && g) {
+      newGrailItem = { ...g, ...{ gameType, character } };
+    } else if (!existing && !g) {
+      newGrailItem = { ...grailItem, ...{ gameType, character } };
+    } else if (!existing && g) {
+      newGrailItem = { ...g, ...{ gameType, character } };
+    }
+    setGrailItem(newGrailItem);
     setExisting(!!g);
   }
 
@@ -188,21 +208,21 @@ function GrailItemModal({ category, item, onHide }) {
             <div className="mb-3">
               <div className="form-check form-check-inline">
                 <input className="form-check-input" type="radio" name="difficulty" id="normal" value="normal"
-                  checked={grailItem?.difficulty === 'normal'} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked } })} />
+                  checked={grailItem?.difficulty === 'normal'} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked ? 'normal' : grailItem.difficulty } })} />
                 <label className="form-check-label" htmlFor="normal">
                   Normal
                 </label>
               </div>
               <div className="form-check form-check-inline">
                 <input className="form-check-input" type="radio" name="difficulty" id="nightmare" value="nightmare"
-                  checked={grailItem?.difficulty === 'nightmare'} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked } })} />
+                  checked={grailItem?.difficulty === 'nightmare'} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked ? 'nightmare' : grailItem.difficulty } })} />
                 <label className="form-check-label" htmlFor="nightmare">
                   Nightmare
                 </label>
               </div>
               <div className="form-check form-check-inline">
                 <input className="form-check-input" type="radio" name="difficulty" id="hell" value="hell"
-                  checked={grailItem?.difficulty === 'hell' || !grailItem} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked } })} />
+                  checked={grailItem?.difficulty === 'hell' || !grailItem} onChange={(e) => setGrailItem({ ...grailItem, ...{ difficulty: e.currentTarget.checked ? 'hell' : grailItem.difficulty } })} />
                 <label className="form-check-label" htmlFor="hell">
                   Hell
                 </label>

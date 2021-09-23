@@ -11,7 +11,7 @@ export default function SignIn() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        router.replace('/');
+        router.replace('/uniques');
       } else {
         console.log('Not logged in');
       }
@@ -54,7 +54,7 @@ export default function SignIn() {
           <label htmlFor="floatingInput">Email address</label>
         </div>
 
-        <div className="form-floating">
+        <div className="form-floating mb-4">
           <input type="password" className="form-control" id="floatingPassword" placeholder="Password" name="password" />
           <label htmlFor="floatingPassword">Password</label>
         </div>
