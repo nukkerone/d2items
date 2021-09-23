@@ -107,14 +107,8 @@ export default function Runewords({ runewords }) {
                       </Dropdown.Toggle>
 
                       <Dropdown.Menu>
-                        {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) < 0) &&
-                          <Dropdown.Item onClick={() => setGrailItem(item)}>Add to Holy Grail</Dropdown.Item>
-                        }
-                        {session && (grail.findIndex((g) => g.category === 'runeword' && g.slug === item.slug) >= 0) &&
-                          <Dropdown.Item onClick={() => setGrailItem(item)}>Edit Holy Grail Item</Dropdown.Item>
-                        }
-                        {session && (grail.findIndex((grailItem) => grailItem.category === 'runeword' && grailItem.slug === item.slug) >= 0) &&
-                          <Dropdown.Item onClick={() => removeFromGrail(item)}>Remove from Holy Grail</Dropdown.Item>
+                        {session &&
+                          <Dropdown.Item onClick={() => setGrailItem(item)}>Configure in Holy Grail</Dropdown.Item>
                         }
                         <Dropdown.Item as={Link} href={'/runewords/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
                       </Dropdown.Menu>

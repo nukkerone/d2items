@@ -14,14 +14,8 @@ function SetItemCard({ item, session, inGrail, addToGrail, editInGrail, removeFr
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              {session && !inGrail &&
-                <Dropdown.Item onClick={() => addToGrail(item)}>Add to Holy Grail</Dropdown.Item>
-              }
-              {session && inGrail &&
-                <Dropdown.Item onClick={() => editInGrail(item)}>Edit item in Holy Grail</Dropdown.Item>
-              }
-              {session && inGrail &&
-                <Dropdown.Item onClick={() => removeFromGrail(item)}>Remove from Holy Grail</Dropdown.Item>
+              {session &&
+                <Dropdown.Item onClick={() => addToGrail(item)}>Configure in Holy Grail</Dropdown.Item>
               }
               <Dropdown.Item as={Link} href={'/sets/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
             </Dropdown.Menu>

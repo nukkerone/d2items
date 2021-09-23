@@ -14,14 +14,8 @@ function RunewordItemCard({ item, session, inGrail, addToGrail, editInGrail, rem
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              {session && !inGrail &&
-                <Dropdown.Item onClick={() => addToGrail(item)}>Add to Holy Grail</Dropdown.Item>
-              }
-              {session && inGrail &&
-                <Dropdown.Item onClick={() => editInGrail(item)}>Edit Item in Holy Grail</Dropdown.Item>
-              }
-              {session && inGrail &&
-                <Dropdown.Item onClick={() => removeFromGrail(item)}>Remove from Holy Grail</Dropdown.Item>
+              {session &&
+                <Dropdown.Item onClick={() => addToGrail(item)}>Configure in Holy Grail</Dropdown.Item>
               }
               <Dropdown.Item as={Link} href={'/runewords/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
             </Dropdown.Menu>

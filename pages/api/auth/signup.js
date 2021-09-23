@@ -15,7 +15,7 @@ const signup = async (req, res) => {
   const { username, email, password } = req.body;
 
   //Validate
-  if (!email || !email.includes('@') || !password) {
+  if (!email || !email.includes('@') || !username || !password) {
     res.status(422).json({ message: 'Invalid Data', error: true });
     return;
   }

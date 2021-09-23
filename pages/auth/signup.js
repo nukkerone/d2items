@@ -21,6 +21,7 @@ export default function SignUp() {
   const onFormSubmit = async (e) => {
     e.preventDefault();
     //Getting value from useRef()
+    const username = e.target.username.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     //Validation
@@ -35,15 +36,16 @@ export default function SignUp() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: email,
-        password: password,
+        username,
+        email,
+        password
       }),
     });
     //Await for data for any desirable next steps
     res = await res.json();
 
-    if (!res && res.error) {
-      toast.error('Credentials does not match');
+    if (!res || res.error) {
+      toast.error('There was a problem with the signup');
     } else {
       toast.success('User created');
       router.replace('/auth/signin');
