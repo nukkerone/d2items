@@ -15,7 +15,7 @@ function RunewordItemCard({ item, session, inGrail, addToGrail, editInGrail, rem
 
             <Dropdown.Menu>
               {session &&
-                <Dropdown.Item onClick={() => addToGrail(item)}>Configure in Holy Grail</Dropdown.Item>
+                <Dropdown.Item onClick={() => editInGrail(item)}>Configure in Holy Grail</Dropdown.Item>
               }
               <Dropdown.Item as={Link} href={'/runewords/' + item.slug} className="dropdown-item">View Details</Dropdown.Item>
             </Dropdown.Menu>
