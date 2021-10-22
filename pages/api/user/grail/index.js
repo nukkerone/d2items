@@ -45,13 +45,14 @@ const post = async (req, res) => {
     const gameType = req.body.gameType;
     const indexFound = grail.findIndex((grailItem) => grailItem.category === category && grailItem.slug === slug && grailItem.gameType === gameType && grailItem.character === character);
     const grailItem = { category, slug, character, foundAt, magicFind, isPerfect, isEthereal, difficulty, gameType };
+    const lastProfile = { character, foundAt, magicFind, difficulty, gameType }
     if (indexFound < 0) {
       grail.push(grailItem);
     } else {
       grail[indexFound] = grailItem;
     }
     await db.collection('grail').updateOne({ email }, [
-      { $set: { username: user.username, items: grail } },
+      { $set: { username: user.username, items: grail, lastProfile } },
     ], { upsert: true });
 
     return res.status(200).json(grailItem);

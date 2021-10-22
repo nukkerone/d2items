@@ -8,6 +8,7 @@ function GrailItemModal({ category, item, onHide }) {
   const [grailItem, setGrailItem] = useState(null);
   const [grailItems, setGrailItems] = useState([]);
   const [existing, setExisting] = useState(false);
+  const [lastProfile, setLastProfile] = useState(false);
   const formRef = useRef(null);
 
   const defaultItem = {
@@ -23,6 +24,9 @@ function GrailItemModal({ category, item, onHide }) {
   useEffect(async () => {
     if (item && category) {
       setShow(true);
+      let lastProfile = await fetchGrailLastProfile();
+      lastProfile = lastProfile ?? {};
+      setLastProfile(lastProfile);
       const g = await fetchGrailItems(category, item.slug);
       setGrailItems(g);
       if (g.length > 0) {
@@ -30,7 +34,7 @@ function GrailItemModal({ category, item, onHide }) {
         setGrailItem(gi);
         setExisting(true);
       } else {
-        setGrailItem(defaultItem);
+        setGrailItem({...defaultItem, ...lastProfile});
         setExisting(false);
       }
       setLoaded(true);
@@ -84,6 +88,13 @@ function GrailItemModal({ category, item, onHide }) {
     return await res.json();
   }
 
+  const fetchGrailLastProfile = async () => {
+    const res = await fetch('/api/user/grail/last-profile', {
+      method: 'GET',
+    });
+    return await res.json();
+  }
+
   const save = async (e, category, slug) => {
     e.preventDefault();
 
@@ -105,6 +116,7 @@ function GrailItemModal({ category, item, onHide }) {
     if (response && response.ok) {
       const body = await response.json();
       setGrailItem(body);
+      setLastProfile({ character, foundAt, magicFind, difficulty, gameType });
       const foundIndex = grailItems.findIndex(i => i.gameType === body.gameType && i.character === body.character);
       if (foundIndex >= 0) {
         setGrailItems(grailItems.map(i => i.gameType === body.gameType && i.character === body.character ? body : i));
@@ -146,7 +158,7 @@ function GrailItemModal({ category, item, onHide }) {
           setGrailItem(gi);
           setExisting(true);
         } else {
-          setGrailItem(defaultItem);
+          setGrailItem({...defaultItem, ...lastProfile});
           setExisting(false);
         }
       }
