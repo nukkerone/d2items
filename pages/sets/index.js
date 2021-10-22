@@ -10,6 +10,7 @@ import SetItemCard from '../../components/set-item-card';
 import SetRigCard from '../../components/set-rig-card';
 import useGrail from '../../hooks/useGrail';
 import GrailItemModal from '../../components/grail-item-modal';
+import SearchInput from '../../components/search-input';
 
 export default function Sets({ setitems }) {
   let miniSearch = new MiniSearch({
@@ -49,9 +50,9 @@ export default function Sets({ setitems }) {
     miniSearch.addAll(setitems);
   }, []);
 
-  const searchHandler = (e) => {
-    if (e.target.value) {
-      const results = miniSearch.search(e.target.value).map(i => i.id);
+  const searchHandler = (searchQuery) => {
+    if (searchQuery) {
+      const results = miniSearch.search(searchQuery).map(i => i.id);
       const items = setitems.filter(i => results.indexOf(i._id) >= 0);
       setItems(items);
     } else {
@@ -77,9 +78,7 @@ export default function Sets({ setitems }) {
 
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 

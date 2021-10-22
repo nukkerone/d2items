@@ -14,6 +14,7 @@ import GrailItemModal from '../../components/grail-item-modal';
 import { useRouter } from 'next/router';
 import { Button } from 'react-bootstrap';
 import classNames from 'classnames';
+import SearchInput from '../../components/search-input';
 
 export default function Grail({ uniqueItems, runewordItems, setItems }) {
   let uniquesMiniSearch = new MiniSearch({
@@ -93,17 +94,17 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
     setsMiniSearch.addAll(setitems);
   }, []);
 
-  const searchHandler = (e) => {
-    if (e.target.value) {
-      const results = uniquesMiniSearch.search(e.target.value).map(i => i.id);
+  const searchHandler = (searchQuery) => {
+    if (searchQuery) {
+      const results = uniquesMiniSearch.search(searchQuery).map(i => i.id);
       const i = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
       setUniqueItems(i);
 
-      const runewordResults = runewordsMiniSearch.search(e.target.value).map(i => i.id);
+      const runewordResults = runewordsMiniSearch.search(searchQuery).map(i => i.id);
       const j = runeworditems.filter(i => runewordResults.indexOf(i._id) >= 0);
       setRunewordItems(j);
 
-      const setResults = setsMiniSearch.search(e.target.value).map(i => i.id);
+      const setResults = setsMiniSearch.search(searchQuery).map(i => i.id);
       const k = setitems.filter(i => setResults.indexOf(i._id) >= 0);
       setSetItems(k);
 
@@ -113,10 +114,6 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
       setSetItems(setitems);
     }
   };
-
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
   
   const removeUniqueFromGrail = async (item) => {
     const success = await removeFromGrail(item, 'unique');
@@ -167,9 +164,7 @@ export default function Grail({ uniqueItems, runewordItems, setItems }) {
 
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 

@@ -11,6 +11,7 @@ import CustomMasonry from '../../components/custom-masonry';
 import GrailItemModal from '../../components/grail-item-modal';
 import useGrail from '../../hooks/useGrail';
 import { Dropdown } from 'react-bootstrap';
+import SearchInput from '../../components/search-input';
 
 export default function Uniques({ uniqueitems }) {
   let miniSearch = new MiniSearch({
@@ -39,19 +40,15 @@ export default function Uniques({ uniqueitems }) {
     miniSearch.addAll(uniqueitems);
   }, []);
 
-  const searchHandler = (e) => {
-    if (e.target.value) {
-      const results = miniSearch.search(e.target.value).map(i => i.id);
+  const searchHandler = (searchQuery) => {
+    if (searchQuery) {
+      const results = miniSearch.search(searchQuery).map(i => i.id);
       const i = uniqueitems.filter(i => results.indexOf(i._id) >= 0);
       setItems(i);
     } else {
       setItems(uniqueitems);
     }
   };
-
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
 
   return (
     <div className="container container-bg container-uniques">
@@ -67,9 +64,7 @@ export default function Uniques({ uniqueitems }) {
 
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 

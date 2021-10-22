@@ -6,6 +6,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import SearchInput from '../../components/search-input';
 
 export default function Recipes({ recipes }) {
   let miniSearch;
@@ -43,10 +44,6 @@ export default function Recipes({ recipes }) {
     }
   };
 
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
-
   return (
     <div className="container container-bg container-recipes">
       <Head>
@@ -59,12 +56,9 @@ export default function Recipes({ recipes }) {
         
       <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
-
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 

@@ -6,6 +6,7 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
+import SearchInput from '../../components/search-input';
 
 export default function Base({ baseitems }) {
   let miniSearch;
@@ -25,19 +26,15 @@ export default function Base({ baseitems }) {
     miniSearch.addAll(baseitems);
   }, []);
 
-  const searchHandler = (e) => {
-    if (e.target.value) {
-      const results = miniSearch.search(e.target.value).map(i => i.id);
+  const searchHandler = (searchQuery) => {
+    if (searchQuery) {
+      const results = miniSearch.search(searchQuery).map(i => i.id);
       const items = baseitems.filter(i => results.indexOf(i._id) >= 0);
       setItems(items);
     } else {
       setItems(baseitems);
     }
   };
-
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
 
   return (
     <div className="container container-bg container-base">
@@ -50,12 +47,9 @@ export default function Base({ baseitems }) {
         
       <div className="logo"><h1><span>D2</span>BASE</h1></div>
 
-
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 
