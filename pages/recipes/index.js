@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
 import Head from 'next/head';
 import Image from 'next/image';
 import { connectToDatabase } from '../../lib/mongodb';

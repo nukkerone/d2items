@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
 import Head from 'next/head';
 import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../lib/mongodb';
@@ -8,7 +7,6 @@ import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import SetItemCard from '../../components/set-item-card';
 import SetRigCard from '../../components/set-rig-card';
-import useGrail from '../../hooks/useGrail';
 import GrailItemModal from '../../components/grail-item-modal';
 import SearchInput from '../../components/search-input';
 
@@ -34,14 +32,12 @@ export default function Sets({ setitems }) {
 
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(setitems);
-  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('set-item');
   const [setItemGrailItem, setSetItemGrailItem] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
         setSession(session);
-        fetchGrail();
       } else {
         setSession(null);
       }
@@ -59,10 +55,6 @@ export default function Sets({ setitems }) {
       setItems(setitems);
     }
   };
-
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
 
   return (
     <div className="container container-bg container-sets">
@@ -84,7 +76,7 @@ export default function Sets({ setitems }) {
 
         <UpperNav></UpperNav>
 
-        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => { setSetItemGrailItem(null); fetchGrail(); }}></GrailItemModal>
+        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => { setSetItemGrailItem(null); /* fetchGrail(); */ }}></GrailItemModal>
 
         <h1 className="title">
           Diablo 2 Resurrected Sets
@@ -101,10 +93,7 @@ export default function Sets({ setitems }) {
                   item={item}
                   key={item._id}
                   session={session}
-                  inGrail={(grail.findIndex((grailItem) => grailItem.category === 'set-item' && grailItem.slug === item.slug) >= 0)}
-                  addToGrail={() => setSetItemGrailItem(item)}
                   editInGrail={() => setSetItemGrailItem(item)}
-                  removeFromGrail={removeFromGrail}
                 ></SetItemCard>
             }}></CustomMasonry>
         </div>

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState, useRef, forwardRef} from 'react';
-import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +8,6 @@ import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import GrailItemModal from '../../components/grail-item-modal';
-import useGrail from '../../hooks/useGrail';
 import { Dropdown } from 'react-bootstrap';
 import SearchInput from '../../components/search-input';
 
@@ -25,14 +23,12 @@ export default function Uniques({ uniqueitems }) {
 
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(uniqueitems);
-  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('unique');
   const [grailItem, setGrailItem] = useState(null);
 
   useEffect(function () {
     getSession().then((session) => {
       if (session) {
         setSession(session);
-        fetchGrail();
       } else {
         setSession(null);
       }
@@ -74,7 +70,7 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); fetchGrail()}}></GrailItemModal>
+        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); }}></GrailItemModal>
 
         <div className="row grid">
           <CustomMasonry

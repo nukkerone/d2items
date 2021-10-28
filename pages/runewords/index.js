@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +8,6 @@ import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
 import GrailItemModal from '../../components/grail-item-modal';
-import useGrail from '../../hooks/useGrail';
 import { Dropdown } from 'react-bootstrap';
 import SearchInput from '../../components/search-input';
 
@@ -37,14 +35,12 @@ export default function Runewords({ runewords }) {
 
   const [session, setSession] = useState(null);
   const [items, setRunewords] = useState(runewords);
-  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('runeword');
   const [grailItem, setGrailItem] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
         setSession(session);
-        fetchGrail();
       } else {
         setSession(null);
       }
@@ -83,7 +79,7 @@ export default function Runewords({ runewords }) {
 
         <UpperNav></UpperNav>
 
-        <GrailItemModal category="runeword" item={grailItem} onHide={() => { setGrailItem(null); fetchGrail() }}></GrailItemModal>
+        <GrailItemModal category="runeword" item={grailItem} onHide={() => { setGrailItem(null); }}></GrailItemModal>
 
         <h1 className="title">
           Diablo 2 Resurrected Runewords

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState, useRef, forwardRef } from 'react';
-import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
@@ -7,7 +6,6 @@ import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import CustomMasonry from '../../components/custom-masonry';
-import useGrail from '../../hooks/useGrail';
 import UniqueItemCard from '../../components/unique-item-card';
 import RunewordItemCard from '../../components/runeword-item-card';
 import SetItemCard from '../../components/set-item-card';
@@ -72,7 +70,6 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
   const [uniqueitems, setUniqueItems] = useState(uniqueItems);
   const [runeworditems, setRunewordItems] = useState(runewordItems);
   const [setitems, setSetItems] = useState(setItems);
-  const [grail, fetchGrail, addToGrail, removeFromGrail] = useGrail('unique');
   const [uniqueGrailItem, setUniqueGrailItem] = useState(null);
   const [runewordGrailItem, setRunewordGrailItem] = useState(null);
   const [setItemGrailItem, setSetItemGrailItem] = useState(null);
@@ -114,40 +111,6 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
     }
   };
 
-  const debouncedSearchHandler = useMemo(
-    () => debounce(searchHandler, 300)
-    , []);
-
-  const removeUniqueFromGrail = async (item) => {
-    const success = await removeFromGrail(item, 'unique');
-    if (success) {
-      const index = uniqueitems.findIndex(u => u.slug === item.slug);
-      let modified = [...uniqueitems];
-      modified.splice(index, 1);
-      setUniqueItems(modified);
-    }
-  }
-
-  const removeRunewordFromGrail = async (item) => {
-    const success = await removeFromGrail(item, 'runeword');
-    if (success) {
-      const index = runeworditems.findIndex(u => u.slug === item.slug);
-      let modified = [...runeworditems];
-      modified.splice(index, 1);
-      setRunewordItems(modified);
-    }
-  }
-
-  const removeSetitemFromGrail = async (item) => {
-    const success = await removeFromGrail(item, 'set-item');
-    if (success) {
-      const index = setitems.findIndex(u => u.slug === item.slug);
-      let modified = [...setitems];
-      modified.splice(index, 1);
-      setSetItems(modified);
-    }
-  }
-
   const changeParams = async (gameType, character) => {
     await router.push(`/grail/${username}?gameType=${gameType}&character=${character}`);
     router.reload();
@@ -167,9 +130,7 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
 
         <div className="row">
           <form className="col-lg-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" id="search" placeholder="Type to search" onChange={debouncedSearchHandler} />
-            </div>
+            <SearchInput onSearch={searchHandler}></SearchInput>
           </form>
         </div>
 
@@ -214,9 +175,7 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
                 item={item}
                 key={item._id}
                 session={session}
-                inGrail={true}
                 editInGrail={() => setUniqueGrailItem(item)}
-                removeFromGrail={() => removeUniqueFromGrail(item)}
               ></UniqueItemCard>
             }}></CustomMasonry>
         </div>
@@ -230,9 +189,7 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
                 item={item}
                 key={item._id}
                 session={session}
-                inGrail={true}
                 editInGrail={() => setRunewordGrailItem(item)}
-                removeFromGrail={() => removeRunewordFromGrail(item)}
               ></RunewordItemCard>
             }}></CustomMasonry>
         </div>
@@ -246,9 +203,7 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
                 item={item}
                 key={item._id}
                 session={session}
-                inGrail={true}
                 editInGrail={() => setSetItemGrailItem(item)}
-                removeFromGrail={() => removeSetitemFromGrail(item)}
               ></SetItemCard>
             }}></CustomMasonry>
         </div>
@@ -258,7 +213,6 @@ export default function Grail({ username, uniqueItems, runewordItems, setItems }
     </div>
   )
 }
-
 
 export async function getServerSideProps({ req, res, params: { uid }, query }) {
   if (!query.gameType || !query.character) {

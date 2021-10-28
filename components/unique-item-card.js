@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 
-function UniqueItemCard({ item, session, inGrail, addToGrail, editInGrail, removeFromGrail }) {
+function UniqueItemCard({ item, session, editInGrail }) {
   return (
     <div key={item._id} className="grid-item">
       <div className="card mb-3 item-card">
