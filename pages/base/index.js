@@ -123,7 +123,7 @@ export default function Base({ baseitems }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const { db } = await connectToDatabase()
   const baseitems = await db.collection('base_scrapped_normalized').find({}).limit(500).toArray();
 
