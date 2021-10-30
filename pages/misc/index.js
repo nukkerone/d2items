@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
 import Head from 'next/head';
 import { connectToDatabase } from '../../lib/mongodb';
 import MiniSearch from 'minisearch';
 import UpperNav from '../../components/upper-nav';
 import RuneMiscCard from '../../components/rune-misc-card';
 import CustomMasonry from '../../components/custom-masonry';
+import SearchInput from '../../components/search-input';
 
 export default function Misc({ miscitems }) {
   let miniSearch;
