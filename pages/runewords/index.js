@@ -11,6 +11,8 @@ import GrailItemModal from '../../components/grail-item-modal';
 import { Dropdown } from 'react-bootstrap';
 import SearchInput from '../../components/search-input';
 
+import * as classNames from 'classnames';
+
 export default function Runewords({ runewords }) {
   let miniSearch = new MiniSearch({
     idField: '_id',
@@ -36,11 +38,13 @@ export default function Runewords({ runewords }) {
   const [session, setSession] = useState(null);
   const [items, setRunewords] = useState(runewords);
   const [grailItem, setGrailItem] = useState(null);
+  const [addedItems, setAddedItems] = useState([]);
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
         setSession(session);
+        updateAddedItems();
       } else {
         setSession(null);
       }
@@ -58,6 +62,18 @@ export default function Runewords({ runewords }) {
       setRunewords(runewords);
     }
   };
+
+  const fetchAddedItems = async () => {
+    const res = await fetch('/api/user/grail/added-items?type=runeword', {
+      method: 'GET',
+    });
+    return await res.json();
+  }
+
+  const updateAddedItems = async () => {
+    const ai = await fetchAddedItems();
+    setAddedItems(ai);
+  }
 
   return (
     <div className="container container-bg container-runewords">
@@ -79,7 +95,7 @@ export default function Runewords({ runewords }) {
 
         <UpperNav></UpperNav>
 
-        <GrailItemModal category="runeword" item={grailItem} onHide={() => { setGrailItem(null); }}></GrailItemModal>
+        <GrailItemModal category="runeword" item={grailItem} onHide={() => { setGrailItem(null); updateAddedItems(); }}></GrailItemModal>
 
         <h1 className="title">
           Diablo 2 Resurrected Runewords
@@ -90,7 +106,7 @@ export default function Runewords({ runewords }) {
             items={items}
             render={({ data: item }) => {
               return <div key={item._id} className="grid-item">
-                <div className="card mb-3 item-card">
+                <div className={classNames({ 'card mb-3 item-card': true, 'in-grail': addedItems.indexOf(item.slug) >= 0 })}>
                   <div className="card-body">
                     <Dropdown>
                       <Dropdown.Toggle variant="transparent" className="item-card-options">

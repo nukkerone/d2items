@@ -88,7 +88,11 @@ h3 {
 	border-radius: 2px;
 	text-align: center;
 }
-
+.card.in-grail {
+	/* box-shadow: 0 3px 5px rgba(255, 254, 254, 0.85)!important; */
+	border: 1px solid rgb(151, 150, 150);
+	box-shadow: rgba(255, 254, 254, 0.5) 0px 7px 7px 0px;
+}
 .card-body h2 {
 	font-family: exocet, sans-serif;
 	font-style: normal;

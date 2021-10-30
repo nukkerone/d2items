@@ -3,10 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 
-function SetItemCard({ item, session, editInGrail }) {
+import * as classNames from 'classnames';
+
+function SetItemCard({ item, session, inGrail, editInGrail }) {
   return (
     <div key={item._id} className="grid-item">
-      <div className="card mb-3 item-card">
+      <div className={classNames({ 'card mb-3 item-card': true, 'in-grail': inGrail })}>
         <div className="card-body">
           <Dropdown>
             <Dropdown.Toggle variant="transparent" className="item-card-options">

@@ -33,11 +33,13 @@ export default function Sets({ setitems }) {
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(setitems);
   const [setItemGrailItem, setSetItemGrailItem] = useState(null);
+  const [addedItems, setAddedItems] = useState([]);
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
         setSession(session);
+        updateAddedItems();
       } else {
         setSession(null);
       }
@@ -55,6 +57,18 @@ export default function Sets({ setitems }) {
       setItems(setitems);
     }
   };
+
+  const fetchAddedItems = async () => {
+    const res = await fetch('/api/user/grail/added-items?type=set-item', {
+      method: 'GET',
+    });
+    return await res.json();
+  }
+
+  const updateAddedItems = async () => {
+    const ai = await fetchAddedItems();
+    setAddedItems(ai);
+  }
 
   return (
     <div className="container container-bg container-sets">
@@ -76,7 +90,7 @@ export default function Sets({ setitems }) {
 
         <UpperNav></UpperNav>
 
-        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => { setSetItemGrailItem(null); /* fetchGrail(); */ }}></GrailItemModal>
+        <GrailItemModal category="set-item" item={setItemGrailItem} onHide={() => { setSetItemGrailItem(null); updateAddedItems(); }}></GrailItemModal>
 
         <h1 className="title">
           Diablo 2 Resurrected Sets
@@ -93,6 +107,7 @@ export default function Sets({ setitems }) {
                   item={item}
                   key={item._id}
                   session={session}
+                  inGrail={addedItems.indexOf(item.slug) >= 0}
                   editInGrail={() => setSetItemGrailItem(item)}
                 ></SetItemCard>
             }}></CustomMasonry>

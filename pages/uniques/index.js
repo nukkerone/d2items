@@ -11,6 +11,8 @@ import GrailItemModal from '../../components/grail-item-modal';
 import { Dropdown } from 'react-bootstrap';
 import SearchInput from '../../components/search-input';
 
+import * as classNames from 'classnames';
+
 export default function Uniques({ uniqueitems }) {
   let miniSearch = new MiniSearch({
     idField: '_id',
@@ -24,11 +26,13 @@ export default function Uniques({ uniqueitems }) {
   const [session, setSession] = useState(null);
   const [items, setItems] = useState(uniqueitems);
   const [grailItem, setGrailItem] = useState(null);
+  const [addedItems, setAddedItems] = useState([]);
 
   useEffect(function () {
-    getSession().then((session) => {
+    getSession().then(async (session) => {
       if (session) {
         setSession(session);
+        updateAddedItems();
       } else {
         setSession(null);
       }
@@ -45,6 +49,18 @@ export default function Uniques({ uniqueitems }) {
       setItems(uniqueitems);
     }
   };
+
+  const fetchAddedItems = async () => {
+    const res = await fetch('/api/user/grail/added-items?type=unique', {
+      method: 'GET',
+    });
+    return await res.json();
+  }
+
+  const updateAddedItems = async () => {
+    const ai = await fetchAddedItems();
+    setAddedItems(ai);
+  }
 
   return (
     <div className="container container-bg container-uniques">
@@ -70,14 +86,14 @@ export default function Uniques({ uniqueitems }) {
           Diablo 2 Resurrected Uniques
         </h1>
 
-        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); }}></GrailItemModal>
+        <GrailItemModal category="unique" item={grailItem} onHide={() => { setGrailItem(null); updateAddedItems(); }}></GrailItemModal>
 
         <div className="row grid">
           <CustomMasonry
             items={items}
             render={({ data: item }) => {
             return <div key={item._id} className="grid-item">
-              <div className="card mb-3 item-card">
+              <div className={classNames({ 'card mb-3 item-card': true, 'in-grail': addedItems.indexOf(item.slug) >= 0 })}>
                 <div className="card-body">
 
                   <Dropdown>
